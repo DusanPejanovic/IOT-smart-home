@@ -68,11 +68,11 @@ if __name__ == '__main__':
 
         if command == "0":
             if len(led_diodes) == 0:
-                print("There are no led diodes connedted.")
+                print("There are no led diodes connected.")
             else:
                 diodes_management(led_diodes)
         if command == "1":
             if len(buzzers) == 0:
-                print("There are no buzzers connedted.")
+                print("There are no buzzers connected.")
             else:
                 buzzer_management(buzzers)

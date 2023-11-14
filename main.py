@@ -1,11 +1,11 @@
 import threading
 
-from controllers.uds_controller import run_uds
+from controllers.msw_controller import MSWController
+from controllers.uds_controller import UDSController
 from settings import load_settings
-from controllers.dht_controller import run_dht
-from controllers.btn_controller import run_button
-from controllers.pir_controller import run_pir
-from controllers.msw_controller import run_msw
+from controllers.dht_controller import DHTController
+from controllers.btn_controller import ButtonController
+from controllers.pir_controller import PirController
 
 import time
 
@@ -23,18 +23,28 @@ class SmartHomeController:
         self.console_lock = threading.Lock()
         self.stop_event = threading.Event()
 
-    def run_controller(self, component_type, settings):
-        print('Broj tredova: ' + str(len(self.threads)))
+    def run_controller(self, pi_id, component_id, settings):
+        component_type = settings["type"]
         if component_type == "PIR":
-            run_pir(settings, self.threads, self.stop_event)
+            pir_controller = PirController(pi_id, component_id, settings, self.threads, self.console_lock,
+                                                 self.stop_event)
+            pir_controller.run_loop()
         elif component_type == "UDS":
-            run_uds(settings, self.threads, self.stop_event)
+            uds_controller = UDSController(pi_id, component_id, settings, self.threads, self.console_lock,
+                                                 self.stop_event)
+            uds_controller .run_loop()
         elif component_type == "BTN":
-            run_button(settings, self.threads, self.stop_event)
+            button_controller = ButtonController(pi_id, component_id, settings, self.threads, self.console_lock,
+                                                 self.stop_event)
+            button_controller.run_loop()
         elif component_type == "DHT":
-            run_dht(settings, self.threads, self.stop_event)
+            dht_controller = DHTController(pi_id, component_id, settings, self.threads, self.console_lock,
+                                           self.stop_event)
+            dht_controller.run_loop()
         elif component_type == "MSW":
-            run_msw(settings, self.threads, self.stop_event)
+            msw_controller = MSWController(pi_id, component_id, settings, self.threads, self.console_lock,
+                                           self.stop_event)
+            msw_controller.run_loop()
 
     def stop(self):
         self.stop_event.set()
@@ -46,11 +56,10 @@ if __name__ == "__main__":
     smart_home = SmartHomeController()
     try:
         for pi_id, pi_settings in settings.items():
-            for device_id, device_settings in pi_settings.items():
-                smart_home.run_controller(device_settings["type"], device_settings)
+            for component_id, component_settings in pi_settings.items():
+                smart_home.run_controller(pi_id, component_id, component_settings)
         while True:
             time.sleep(1)
     except KeyboardInterrupt:
         print('Stopping app')
         smart_home.stop()
-

@@ -9,6 +9,7 @@ class BuzzerController:
         self.buzzer_on = False
         self.simulated = simulated
         self.pin = pin
+        self.buzz = None
         if not simulated:
             self.setup_buzzer()
 
@@ -16,6 +17,7 @@ class BuzzerController:
         import RPi.GPIO as GPIO
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.pin, GPIO.OUT)
+        self.buzz = GPIO.PWM(self.pin, 440)
 
     def buzzer_info(self):
         with threading.Lock():
@@ -37,9 +39,9 @@ class BuzzerController:
         else:
             import RPi.GPIO as GPIO
             if not self.buzzer_on:
-                GPIO.output(self.pin, GPIO.HIGH)
+                self.buzz.start(50)
                 self.buzzer_on = False
             else:
-                GPIO.output(self.pin, GPIO.LOW)
+                self.buzz.stop()
                 self.buzzer_on = True
 
