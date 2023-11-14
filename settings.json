@@ -1,6 +1,9 @@
 {
+  "Pi1": {
     "DHT1": {
-        "simulated": false,
-        "pin": 17
-    } 
+      "component_type": "DHT",
+      "simulated": true,
+      "pin": 17
+    }
+  }
 }
