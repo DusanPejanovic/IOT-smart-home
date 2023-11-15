@@ -2,7 +2,6 @@ import time
 import random
 import threading
 
-# MembraneSwitch simulator class
 class MembraneSwitchSimulator:
     def __init__(self, callback, stop_event):
         self.callback = callback

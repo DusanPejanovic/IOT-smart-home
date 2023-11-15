@@ -1,4 +1,3 @@
-# sensors/membrane_switch.py
 
 import RPi.GPIO as GPIO
 import time
