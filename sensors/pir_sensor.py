@@ -1,7 +1,6 @@
 import RPi.GPIO as GPIO
 
 
-# PIR sensor class
 class PIRSensor:
     def __init__(self, pin):
         self.pin = pin

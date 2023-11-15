@@ -8,8 +8,8 @@ class DHT(object):
     DHTLIB_ERROR_TIMEOUT = -2
     DHTLIB_INVALID_VALUE = -999
 
-    DHTLIB_DHT11_WAKEUP = 0.020  # 0.018		#18ms
-    DHTLIB_TIMEOUT = 0.0001  # 100us
+    DHTLIB_DHT11_WAKEUP = 0.020
+    DHTLIB_TIMEOUT = 0.0001
 
     humidity = 0
     temperature = 0
@@ -18,7 +18,6 @@ class DHT(object):
         self.pin = pin
         self.bits = [0, 0, 0, 0, 0]
 
-    # Read DHT sensor, store the original data in bits[]
     def readSensor(self, pin, wakeupDelay):
         mask = 0x80
         idx = 0
@@ -27,44 +26,36 @@ class DHT(object):
         GPIO.output(pin, GPIO.LOW)
         time.sleep(wakeupDelay)
         GPIO.output(pin, GPIO.HIGH)
-        # time.sleep(40*0.000001)
         GPIO.setup(pin, GPIO.IN)
 
         loopCnt = self.DHTLIB_TIMEOUT
         t = time.time()
         while GPIO.input(pin) == GPIO.LOW:
             if (time.time() - t) > loopCnt:
-                # print ("Echo LOW")
                 return self.DHTLIB_ERROR_TIMEOUT
         t = time.time()
         while GPIO.input(pin) == GPIO.HIGH:
             if (time.time() - t) > loopCnt:
-                # print ("Echo HIGH")
                 return self.DHTLIB_ERROR_TIMEOUT
         for i in range(0, 40, 1):
             t = time.time()
             while GPIO.input(pin) == GPIO.LOW:
                 if (time.time() - t) > loopCnt:
-                    # print ("Data Low %d"%(i))
                     return self.DHTLIB_ERROR_TIMEOUT
             t = time.time()
             while GPIO.input(pin) == GPIO.HIGH:
                 if (time.time() - t) > loopCnt:
-                    # print ("Data HIGH %d"%(i))
                     return self.DHTLIB_ERROR_TIMEOUT
             if (time.time() - t) > 0.00005:
                 self.bits[idx] |= mask
-            # print("t : %f"%(time.time()-t))
             mask >>= 1
             if mask == 0:
                 mask = 0x80
                 idx += 1
-        # print (self.bits)
         GPIO.setup(pin, GPIO.OUT)
         GPIO.output(pin, GPIO.HIGH)
         return self.DHTLIB_OK
 
-    # Read DHT sensor, analyze the data of temperature and humidity
     def readDHT11(self):
         rv = self.readSensor(self.pin, self.DHTLIB_DHT11_WAKEUP)
         if rv is not self.DHTLIB_OK:
@@ -98,4 +89,4 @@ def run_dht_loop(dht, delay, callback, stop_event):
         callback(humidity, temperature, code)
         if stop_event.is_set():
             break
-        time.sleep(delay)  # Delay between readings
+        time.sleep(delay)
