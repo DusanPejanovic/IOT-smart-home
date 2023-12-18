@@ -1,34 +1,28 @@
 import threading
-import time
 
-from sensors.simulation.dht_simulation import run_dht_simulator
+from controllers.controller import Controller
+from simulators.dht_simulator import DHTSimulator
 
 
-class DHTController:
-    def __init__(self, pi_id, component_id, settings):
-        self.pi_id = pi_id
-        self.component_id = component_id
-        self.settings = settings
-
+class DHTController(Controller):
     def callback(self, humidity, temperature):
-        t = time.localtime()
-        print("= " * 20)
-        print(f"Timestamp: {time.strftime('%H:%M:%S', t)}")
-        print(f"Pi id: {self.pi_id}%")
-        print(f"Code: {self.component_id}%")
-        print(f"Humidity: {humidity}%")
-        print(f"Temperature: {temperature}°C")
+        with self.console_lock:
+            print(self.get_basic_info())
+            print(f"Humidity: {humidity}%")
+            print(f"Temperature: {temperature}°C")
 
-    def run(self, threads, stop_event):
+    def run_loop(self):
         if self.settings['simulated']:
-            print(f"Starting {self.component_id} simulation")
-            thread = threading.Thread(target=run_dht_simulator, args=(2, self.callback, stop_event))
+            simulator = DHTSimulator(self.callback, self.stop_event)
+            print("Starting button simulator")
+            sim_thread = simulator.start()
+            self.threads.append(sim_thread)
+            print("Button simulator started")
         else:
-            from sensors.dht import run_dht_loop, DHT
-            print(f"Starting {self.component_id} loop")
-            dht = DHT(self.settings)
-            thread = threading.Thread(target=run_dht_loop, args=(dht, 2, self.callback, stop_event))
-
-        thread.start()
-        threads.append(thread)
-        print(f"{self.component_id} loop started")
+            from sensors.dht_sensor import run_dht_loop, DHT
+            print("Starting dht1 loop")
+            dht = DHT(self.settings['pin'])
+            dht1_thread = threading.Thread(target=run_dht_loop, args=(dht, 2, self.callback, self.stop_event))
+            dht1_thread.start()
+            self.threads.append(dht1_thread)
+            print("Dht1 loop started")

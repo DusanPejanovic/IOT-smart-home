@@ -2,7 +2,7 @@ import RPi.GPIO as GPIO
 import time
 
 
-class UDSController:
+class UDSSensor:
     def __init__(self, trig_pin, echo_pin):
         self.trig_pin = trig_pin
         self.echo_pin = echo_pin
@@ -41,3 +41,12 @@ class UDSController:
         pulse_duration = pulse_end_time - pulse_start_time
         distance = (pulse_duration * 34300) / 2
         return distance
+
+
+def run_uds_loop(uds, delay, callback, stop_event):
+    while True:
+        distance = uds.get_distance()
+        callback(distance)
+        if stop_event.is_set():
+            break
+        time.sleep(delay)

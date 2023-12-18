@@ -1,68 +1,27 @@
-import RPi.GPIO as GPIO
-import time
+import threading
 
-GPIO.setmode(GPIO.BCM)
-
-TRIG_PIN = 23
-ECHO_PIN = 24
-
-GPIO.setup(TRIG_PIN, GPIO.OUT)
-GPIO.setup(ECHO_PIN, GPIO.IN)
+from controllers.controller import Controller
+from simulators.uds_simulator import UDSSimulator
 
 
-class UDSController:
-    def __init__(self, trig_pin, echo_pin):
-        self.trig_pin = trig_pin
-        self.echo_pin = echo_pin
-        self.setup()
+class UDSController(Controller):
+    def callback(self, distance):
+        with self.console_lock:
+            print(self.get_basic_info())
+            print(f"Distance: {distance}%")
 
-    def setup(self):
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(TRIG_PIN, GPIO.OUT)
-        GPIO.setup(ECHO_PIN, GPIO.IN)
-
-
-def get_distance():
-    GPIO.output(TRIG_PIN, False)
-    time.sleep(0.2)
-    GPIO.output(TRIG_PIN, True)
-    time.sleep(0.00001)
-    GPIO.output(TRIG_PIN, False)
-    pulse_start_time = time.time()
-    pulse_end_time = time.time()
-
-    max_iter = 100
-
-    iter = 0
-    while GPIO.input(ECHO_PIN) == 0:
-        if iter > max_iter:
-            return None
-        pulse_start_time = time.time()
-        iter += 1
-
-    iter = 0
-    while GPIO.input(ECHO_PIN) == 1:
-        if iter > max_iter:
-            return None
-        pulse_end_time = time.time()
-        iter += 1
-
-    pulse_duration = pulse_end_time - pulse_start_time
-    distance = (pulse_duration * 34300) / 2
-    return distance
-
-
-if __name__ == '__main__':
-    try:
-        while True:
-            distance = get_distance()
-            if distance is not None:
-                print(f'Distance: {distance} cm')
-            else:
-                print('Measurement timed out')
-            time.sleep(1)
-    except KeyboardInterrupt:
-        GPIO.cleanup()
-        print('Measurement stopped by user')
-    except Exception as e:
-        print(f'Error: {str(e)}')
+    def run_loop(self):
+        if self.settings['simulated']:
+            print("Starting UDS sumilator")
+            simulator = UDSSimulator(self.callback, self.stop_event)
+            sim_thread = simulator.start()
+            self.threads.append(sim_thread)
+            print("UDS sumilator started")
+        else:
+            from sensors.uds_sensor import run_uds_loop, UDSSensor
+            print("Starting UDS loop")
+            uds = UDSSensor(self.settings["trigger_pin"], self.settings["echo_pin"])
+            uds_thread = threading.Thread(target=run_uds_loop, args=(uds, 2, self.callback, self.stop_event))
+            uds_thread.start()
+            self.threads.append(uds_thread)
+            print("UDS loop started")

@@ -1,8 +1,13 @@
 import threading
+
+from controllers.msw_controller import MSWController
+from controllers.uds_controller import UDSController
+from settings import load_settings
+from controllers.dht_controller import DHTController
+from controllers.btn_controller import ButtonController
+from controllers.pir_controller import PirController
+
 import time
-import json
-from exceptions import UnrecognizedComponentException
-from controllers import DHTController
 
 try:
     import RPi.GPIO as GPIO
@@ -12,33 +17,49 @@ except:
     pass
 
 
-def create_controller(component_type, pi_id, component_id, settings):
-    if component_type == "DHT":
-        return DHTController(pi_id, component_id, settings)
+class SmartHomeController:
+    def __init__(self):
+        self.threads = []
+        self.console_lock = threading.Lock()
+        self.stop_event = threading.Event()
 
-    raise UnrecognizedComponentException(component_type)
+    def run_controller(self, pi_id, component_id, settings):
+        component_type = settings["type"]
+        if component_type == "PIR":
+            pir_controller = PirController(pi_id, component_id, settings, self.threads, self.console_lock,
+                                                 self.stop_event)
+            pir_controller.run_loop()
+        elif component_type == "UDS":
+            uds_controller = UDSController(pi_id, component_id, settings, self.threads, self.console_lock,
+                                                 self.stop_event)
+            uds_controller .run_loop()
+        elif component_type == "BTN":
+            button_controller = ButtonController(pi_id, component_id, settings, self.threads, self.console_lock,
+                                                 self.stop_event)
+            button_controller.run_loop()
+        elif component_type == "DHT":
+            dht_controller = DHTController(pi_id, component_id, settings, self.threads, self.console_lock,
+                                           self.stop_event)
+            dht_controller.run_loop()
+        elif component_type == "MSW":
+            msw_controller = MSWController(pi_id, component_id, settings, self.threads, self.console_lock,
+                                           self.stop_event)
+            msw_controller.run_loop()
 
-
-def load_settings(file_path='settings.json'):
-    with open(file_path, 'r') as f:
-        return json.load(f)
+    def stop(self):
+        self.stop_event.set()
 
 
 if __name__ == "__main__":
     print('Starting app')
     settings = load_settings()
-    threads = []
-    stop_event = threading.Event()
+    smart_home = SmartHomeController()
     try:
         for pi_id, pi_settings in settings.items():
-            for component_id, component_settings in settings[pi_id].items():
-                controller = create_controller(component_settings["component_type"], pi_id, component_id,
-                                               component_settings)
-                controller.run(threads, stop_event)
+            for component_id, component_settings in pi_settings.items():
+                smart_home.run_controller(pi_id, component_id, component_settings)
         while True:
             time.sleep(1)
-
     except KeyboardInterrupt:
         print('Stopping app')
-        for t in threads:
-            stop_event.set()
+        smart_home.stop()
