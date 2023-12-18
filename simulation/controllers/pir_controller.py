@@ -1,12 +1,15 @@
-from controllers.controller import Controller
-from simulators.pir_simulator import PIRSimulator
+from simulation.controllers.controller import Controller
+from simulation.simulators.pir_simulator import PIRSimulator
 
 
 class PirController(Controller):
-    def callback(self):
-        with self.console_lock:
-            print(self.get_basic_info())
-            print("Motion detected.")
+    def callback(self, verbose=False):
+        if verbose:
+            with self.console_lock:
+                print(self.get_basic_info())
+                print("Motion detected.")
+
+        self.process_and_batch_measurements([('Motion', 1)])
 
     def run_loop(self):
         if self.settings['simulated']:
@@ -16,7 +19,7 @@ class PirController(Controller):
             self.threads.append(sim_thread)
             print("Button PIR started")
         else:
-            from sensors.pir_sensor import PIRSensor
+            from simulation.sensors.pir_sensor import PIRSensor
             print("Setting up PIR sensor")
             pir_sensor = PIRSensor(self.settings['pin'])
             pir_sensor.setup_motion_detection(self.callback)

@@ -44,4 +44,3 @@ class BuzzerController:
             else:
                 self.buzz.stop()
                 self.buzzer_on = True
-

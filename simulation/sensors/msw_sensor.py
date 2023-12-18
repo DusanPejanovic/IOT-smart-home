@@ -1,6 +1,6 @@
-
 import RPi.GPIO as GPIO
 import time
+
 
 class MembraneSwitch:
     def __init__(self, pin):
