@@ -1,6 +1,8 @@
 import threading
 import time
 
+from simulation.controllers.mqtt_publisher import MQTTPublisher
+
 
 class BuzzerController:
     def __init__(self, pi_id, name, simulated, pin=0):
@@ -44,3 +46,8 @@ class BuzzerController:
             else:
                 self.buzz.stop()
                 self.buzzer_on = True
+
+        print("Evo ga", int(self.buzzer_on))
+
+        MQTTPublisher.process_and_batch_measurements(self.pi_id, self.name, [("Buzzer", int(self.buzzer_on))],
+                                                     self.simulated)

@@ -1,4 +1,5 @@
 from simulation.controllers.controller import Controller
+from simulation.controllers.mqtt_publisher import MQTTPublisher
 from simulation.simulators.pir_simulator import PIRSimulator
 
 
@@ -9,7 +10,7 @@ class PirController(Controller):
                 print(self.get_basic_info())
                 print("Motion detected.")
 
-        self.process_and_batch_measurements([('Motion', 1)])
+        MQTTPublisher.process_and_batch_measurements(self.pi_id, self.component_id, [('Motion', 1)])
 
     def run_loop(self):
         if self.settings['simulated']:

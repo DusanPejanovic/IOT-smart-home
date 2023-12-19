@@ -1,6 +1,7 @@
 import threading
 
 from simulation.controllers.controller import Controller
+from simulation.controllers.mqtt_publisher import MQTTPublisher
 from simulation.simulators.msw_simulator import MembraneSwitchSimulator
 
 
@@ -11,7 +12,7 @@ class MSWController(Controller):
                 print(self.get_basic_info())
                 print("Membrane switch activated.")
 
-        self.process_and_batch_measurements([('Membrane', 1)])
+        MQTTPublisher.process_and_batch_measurements(self.pi_id, self.component_id, [('Membrane', 1)])
 
     def run_loop(self):
         if self.settings['simulated']:

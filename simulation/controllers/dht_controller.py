@@ -1,18 +1,20 @@
 import threading
 
 from simulation.controllers.controller import Controller
+from simulation.controllers.mqtt_publisher import MQTTPublisher
 from simulation.simulators.dht_simulator import DHTSimulator
 
 
 class DHTController(Controller):
-    def callback(self, humidity, temperature, verbose=False):
+    def callback(self, humidity, temperature, verbose=False, simulated=False):
         if verbose:
             with self.console_lock:
                 print(self.get_basic_info())
                 print(f"Humidity: {humidity}%")
                 print(f"Temperature: {temperature}°C")
 
-        self.process_and_batch_measurements([('Humidity', humidity), ('Temperature', temperature)])
+        MQTTPublisher.process_and_batch_measurements(self.pi_id, self.component_id,
+                                                     [('Humidity', humidity), ('Temperature', temperature)], simulated)
 
     def run_loop(self):
         if self.settings['simulated']:

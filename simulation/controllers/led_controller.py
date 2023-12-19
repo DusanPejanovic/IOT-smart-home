@@ -1,6 +1,8 @@
 import threading
 import time
 
+from simulation.controllers.mqtt_publisher import MQTTPublisher
+
 
 class LedController:
     def __init__(self, pi_id, name, simulated, pin=0):
@@ -41,3 +43,5 @@ class LedController:
             else:
                 GPIO.output(self.pin, GPIO.LOW)
                 self.led_on = True
+
+        MQTTPublisher.process_and_batch_measurements(self.pi_id, self.name, [("Led", int(self.led_on))], self.simulated)

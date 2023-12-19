@@ -29,7 +29,7 @@
       "simulated": true,
       "trigger_pin": 23,
       "echo_pin": 24,
-      "type": "ULS"
+      "type": "UDS"
     },
     "DMS": {
       "simulated": true,
