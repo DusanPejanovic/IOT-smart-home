@@ -82,11 +82,9 @@ def parseCheckCode(code):
 
 
 def run_dht_loop(dht, delay, callback, stop_event):
-    while True:
+    while not stop_event.is_set():
         check = dht.readDHT11()
         code = parseCheckCode(check)
         humidity, temperature = dht.humidity, dht.temperature
         callback(humidity, temperature, code)
-        if stop_event.is_set():
-            break
         time.sleep(delay)

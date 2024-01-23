@@ -2,12 +2,12 @@
   "PI1": {
     "DS1": {
       "simulated": true,
-      "pin": 4,
+      "pin": 17,
       "type": "BTN"
     },
     "DL": {
       "simulated": true,
-      "pin": 17,
+      "pin": 18,
       "type": "LED"
     },
     "DB": {

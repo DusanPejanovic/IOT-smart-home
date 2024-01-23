@@ -27,6 +27,7 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe("Button")
     client.subscribe("Led")
     client.subscribe("Buzzer")
+    client.subscribe("Key")
 
 
 mqtt_client.on_connect = on_connect

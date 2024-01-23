@@ -1,8 +1,7 @@
 import threading
 
-from simulation.controllers.controller import Controller
-from simulation.controllers.mqtt_publisher import MQTTPublisher
-from simulation.simulators.uds_simulator import UDSSimulator
+from controllers.controller import Controller
+from simulators.uds_simulator import simulate_uds_distance
 
 
 class UDSController(Controller):
@@ -12,20 +11,15 @@ class UDSController(Controller):
                 print(self.get_basic_info())
                 print(f"Distance: {distance}%")
 
-        MQTTPublisher.process_and_batch_measurements(self.pi_id, self.component_id, [('Distance', distance)])
+        self.publish_measurements([('Distance', distance)])
 
     def run_loop(self):
         if self.settings['simulated']:
-            print("Starting UDS sumilator")
-            simulator = UDSSimulator(self.callback, self.stop_event)
-            sim_thread = simulator.start()
-            self.threads.append(sim_thread)
-            print("UDS sumilator started")
+            thread = threading.Thread(target=simulate_uds_distance, args=(self.callback, self.stop_event))
         else:
-            from simulation.sensors.uds_sensor import run_uds_loop, UDSSensor
-            print("Starting UDS loop")
+            from sensors.uds_sensor import run_uds_loop, UDSSensor
             uds = UDSSensor(self.settings["trigger_pin"], self.settings["echo_pin"])
-            uds_thread = threading.Thread(target=run_uds_loop, args=(uds, 2, self.callback, self.stop_event))
-            uds_thread.start()
-            self.threads.append(uds_thread)
-            print("UDS loop started")
+            thread = threading.Thread(target=run_uds_loop, args=(uds, 2, self.callback, self.stop_event))
+
+        thread.start()
+        self.threads.append(thread)

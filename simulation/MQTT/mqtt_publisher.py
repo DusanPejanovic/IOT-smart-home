@@ -3,7 +3,7 @@ import threading
 
 from paho.mqtt import publish
 
-from simulation.broker_settings import HOSTNAME, PORT
+from broker_settings import HOSTNAME, PORT
 
 
 class MQTTPublisher:
@@ -26,7 +26,7 @@ class MQTTPublisher:
             cls.publish_event.clear()
 
     @classmethod
-    def process_and_batch_measurements(cls, pi_name, device_name, measurements, simulated=False):
+    def process_and_batch_measurements(cls, pi_name, device_name, measurements, simulated):
         with cls.counter_lock:
             for measurement in measurements:
                 payload = {
@@ -41,8 +41,3 @@ class MQTTPublisher:
 
         if cls.publish_data_counter >= cls.publish_data_limit:
             cls.publish_event.set()
-
-
-publisher_thread = threading.Thread(target=MQTTPublisher.publisher_task, args=())
-publisher_thread.daemon = True
-publisher_thread.start()

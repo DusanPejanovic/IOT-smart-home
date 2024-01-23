@@ -9,7 +9,6 @@ class UDSSensor:
         self.setup()
 
     def setup(self):
-        GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.trig_pin, GPIO.OUT)
         GPIO.setup(self.echo_pin, GPIO.IN)
 
@@ -44,9 +43,7 @@ class UDSSensor:
 
 
 def run_uds_loop(uds, delay, callback, stop_event):
-    while True:
+    while not stop_event.is_set():
+        time.sleep(delay)
         distance = uds.get_distance()
         callback(distance)
-        if stop_event.is_set():
-            break
-        time.sleep(delay)

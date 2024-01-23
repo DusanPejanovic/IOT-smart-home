@@ -1,27 +1,27 @@
-from simulation.controllers.controller import Controller
-from simulation.controllers.mqtt_publisher import MQTTPublisher
-from simulation.simulators.btn_simulator import ButtonSimulator
+import threading
+
+from controllers.controller import Controller
+from MQTT.mqtt_publisher import MQTTPublisher
+from simulators.btn_simulator import simulate_button_press
 
 
 class ButtonController(Controller):
-    def callback(self, verbose=False, simulated=False):
+    def callback(self, pressed, verbose=False):
         if verbose:
             with self.console_lock:
                 print(self.get_basic_info())
-                print("Button pressed!")
-
-        MQTTPublisher.process_and_batch_measurements(self.pi_id, self.component_id, [('Button', 1)], simulated)
+                if pressed:
+                    print("Button pressed!")
+                else:
+                    print("Button released!")
+        self.publish_measurements([('Button', int(pressed))])
 
     def run_loop(self):
         if self.settings['simulated']:
-            simulator = ButtonSimulator(self.callback, self.stop_event)
-            print("Starting button simulator")
-            sim_thread = simulator.start()
-            self.threads.append(sim_thread)
-            print("Button simulator started")
+            thread = threading.Thread(target=simulate_button_press, args=(self.callback, self.stop_event))
+            thread.start()
+            self.threads.append(thread)
         else:
-            from simulation.sensors.btn_sensor import ButtonSensor
-            print("Setting up button sensor")
+            from sensors.btn_sensor import ButtonSensor
             button_sensor = ButtonSensor(self.settings['pin'])
             button_sensor.setup_event_detect(self.callback)
-            print("Button sensor is set up and waiting for press")

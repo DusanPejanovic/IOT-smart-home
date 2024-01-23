@@ -1,6 +1,13 @@
 from controllers.buzzer_controller import BuzzerController
-from controllers.led_controller import LedController
+from controllers.led_controller import LEDController
 from settings import load_settings
+
+try:
+    import RPi.GPIO as GPIO
+
+    GPIO.setmode(GPIO.BCM)
+except ImportError:
+    pass
 
 
 def read_led_diodes_and_buzzers():
@@ -12,14 +19,16 @@ def read_led_diodes_and_buzzers():
         for device_id, device_settings in pi_settings.items():
             if device_settings["type"] == "LED":
                 if device_settings["simulated"]:
-                    led_diodes.append(LedController(pi_id, device_id, device_settings["simulated"]))
+                    led_diodes.append(LEDController(pi_id, device_id, device_settings["simulated"]))
                 else:
-                    led_diodes.append(LedController(pi_id, device_id, device_settings["simulated"], device_settings["pin"]))
+                    led_diodes.append(
+                        LEDController(pi_id, device_id, device_settings["simulated"], device_settings["pin"]))
             elif device_settings["type"] == "BZR":
                 if device_settings["simulated"]:
                     buzzers.append(BuzzerController(pi_id, device_id, device_settings["simulated"]))
                 else:
-                    buzzers.append(BuzzerController(pi_id, device_id, device_settings["simulated"], device_settings["pin"]))
+                    buzzers.append(
+                        BuzzerController(pi_id, device_id, device_settings["simulated"], device_settings["pin"]))
     return led_diodes, buzzers
 
 
@@ -58,21 +67,29 @@ def buzzer_management(buzzers):
 
 if __name__ == '__main__':
     led_diodes, buzzers = read_led_diodes_and_buzzers()
-    while True:
-        clear_terminal("Menu")
-        print("Led diodes management -> 0")
-        print("Buzzer management -> 1")
-        command = input("Enter the command: ")
-        if command == "x":
-            break
+    try:
+        while True:
+            clear_terminal("Menu")
+            print("Led diodes management -> 0")
+            print("Buzzer management -> 1")
+            command = input("Enter the command: ")
+            if command == "x":
+                break
 
-        if command == "0":
-            if len(led_diodes) == 0:
-                print("There are no led diodes connected.")
-            else:
-                diodes_management(led_diodes)
-        if command == "1":
-            if len(buzzers) == 0:
-                print("There are no buzzers connected.")
-            else:
-                buzzer_management(buzzers)
+            if command == "0":
+                if len(led_diodes) == 0:
+                    print("There are no led diodes connected.")
+                else:
+                    diodes_management(led_diodes)
+            if command == "1":
+                if len(buzzers) == 0:
+                    print("There are no buzzers connected.")
+                else:
+                    buzzer_management(buzzers)
+    except KeyboardInterrupt:
+        print('Stopping app')
+    finally:
+        try:
+            GPIO.cleanup()
+        except:
+            pass

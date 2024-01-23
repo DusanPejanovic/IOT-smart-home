@@ -1,7 +1,12 @@
 import threading
 import time
 
-from simulation.controllers.mqtt_publisher import MQTTPublisher
+from MQTT.mqtt_publisher import MQTTPublisher
+
+try:
+    import RPi.GPIO as GPIO
+except ImportError:
+    pass
 
 
 class BuzzerController:
@@ -13,11 +18,9 @@ class BuzzerController:
         self.pin = pin
         self.buzz = None
         if not simulated:
-            self.setup_buzzer()
+            self.setup()
 
-    def setup_buzzer(self):
-        import RPi.GPIO as GPIO
-        GPIO.setmode(GPIO.BCM)
+    def setup(self):
         GPIO.setup(self.pin, GPIO.OUT)
         self.buzz = GPIO.PWM(self.pin, 440)
 
@@ -39,15 +42,13 @@ class BuzzerController:
             self.buzzer_on = not self.buzzer_on
             self.buzzer_info()
         else:
-            import RPi.GPIO as GPIO
-            if not self.buzzer_on:
-                self.buzz.start(50)
-                self.buzzer_on = False
-            else:
+            if self.buzzer_on:
                 self.buzz.stop()
-                self.buzzer_on = True
+            else:
+                self.buzz.start(50)
+            self.buzzer_on = not self.buzzer_on
 
-        print("Evo ga", int(self.buzzer_on))
-
-        MQTTPublisher.process_and_batch_measurements(self.pi_id, self.name, [("Buzzer", int(self.buzzer_on))],
+        MQTTPublisher.process_and_batch_measurements(self.pi_id,
+                                                     self.name,
+                                                     [("Buzzer", int(self.buzzer_on))],
                                                      self.simulated)

@@ -1,21 +1,11 @@
-import time
 import random
-import threading
+import time
 
-class MembraneSwitchSimulator:
-    def __init__(self, callback, stop_event):
-        self.callback = callback
-        self.stop_event = stop_event
 
-    def simulate_interaction(self):
-        while not self.stop_event.is_set():
-            time.sleep(random.uniform(0.5, 5))
-            self.callback()
+def simulate_membrane_switch(delay, callback, stop_event):
+    values = ['0', '1', '2', '3', '4']
 
-    def start(self):
-        thread = threading.Thread(target=self.simulate_interaction)
-        thread.start()
-        return thread
-
-    def stop(self):
-        self.stop_event.set()
+    while not stop_event.is_set():
+        time.sleep(delay)
+        pressed_key = random.choice(values)
+        callback(pressed_key)

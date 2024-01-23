@@ -1,10 +1,15 @@
 import threading
 import time
 
-from simulation.controllers.mqtt_publisher import MQTTPublisher
+from MQTT.mqtt_publisher import MQTTPublisher
+
+try:
+    import RPi.GPIO as GPIO
+except ImportError:
+    pass
 
 
-class LedController:
+class LEDController:
     def __init__(self, pi_id, name, simulated, pin=0):
         self.pi_id = pi_id
         self.name = name
@@ -15,7 +20,6 @@ class LedController:
             self.setup_led_actuator()
 
     def setup_led_actuator(self):
-        import RPi.GPIO as GPIO
         GPIO.setup(self.pin, GPIO.OUT)
 
     def led_info(self):
@@ -31,17 +35,18 @@ class LedController:
             else:
                 print(f"Led turned off!")
 
-    def change_led_state(self):
-        if self.simulated:
-            self.led_on = not self.led_on
-            self.led_info()
-        else:
-            import RPi.GPIO as GPIO
-            if not self.led_on:
-                GPIO.output(self.pin, GPIO.HIGH)
-                self.led_on = False
-            else:
-                GPIO.output(self.pin, GPIO.LOW)
-                self.led_on = True
+    def turn_on(self):
+        self.led_on = True
+        GPIO.output(self.pin, GPIO.HIGH)
+        MQTTPublisher.process_and_batch_measurements(self.pi_id,
+                                                     self.name,
+                                                     [("Led", int(self.led_on))],
+                                                     self.simulated)
 
-        MQTTPublisher.process_and_batch_measurements(self.pi_id, self.name, [("Led", int(self.led_on))], self.simulated)
+    def turn_off(self):
+        self.led_on = False
+        GPIO.output(self.pin, GPIO.LOW)
+        MQTTPublisher.process_and_batch_measurements(self.pi_id,
+                                                     self.name,
+                                                     [("Led", int(self.led_on))],
+                                                     self.simulated)
