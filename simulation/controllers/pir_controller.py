@@ -9,12 +9,7 @@ class PirController(Controller):
         super().__init__(pi_id, component_id, settings, threads)
         self.pir_callback = pir_callback
 
-    def callback(self, verbose=False):
-        if verbose:
-            with self.console_lock:
-                print(self.get_basic_info())
-                print("Motion detected.")
-
+    def callback(self):
         self.publish_measurements([('Motion', 1)])
         self.pir_callback(self.component_id)
 

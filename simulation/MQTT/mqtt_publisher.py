@@ -23,7 +23,7 @@ class MQTTPublisher:
                 cls.publish_data_counter = 0
                 cls.data_batch.clear()
             publish.multiple(local_data_batch, hostname=HOSTNAME, port=PORT)
-            print(f'Published {cls.publish_data_limit} values')
+            # print(f'Published {cls.publish_data_limit} values')
             cls.publish_event.clear()
 
     @classmethod
@@ -43,3 +43,14 @@ class MQTTPublisher:
 
             if cls.publish_data_counter >= cls.publish_data_limit:
                 cls.publish_event.set()
+
+    @classmethod
+    def publish_alarm(cls, type, reason):
+        payload = {
+            "measurement": "Alarm",
+            "type": type,
+            "reason": reason,
+            "time": datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+        }
+        publish.single("Alarm", json.dumps(payload), hostname=HOSTNAME, port=PORT)
+        print("Alarm published")

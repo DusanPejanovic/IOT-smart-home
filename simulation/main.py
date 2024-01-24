@@ -10,6 +10,7 @@ from controllers.uds_controller import UDSController
 from settings import load_settings
 from controllers.controller import Controller
 from smart_home import SmartHome
+from system_logic.alarm_clock import AlarmClock
 from utility.registry import ControllerRegistry
 
 try:

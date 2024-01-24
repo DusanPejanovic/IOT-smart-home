@@ -1,21 +1,36 @@
 import threading
+import time
 
 from controllers.controller import Controller
-from simulators.four_segment_display_simulator import simulate_four_segment_display
 
 
 class FourSegmentDisplayController(Controller):
+    def __init__(self, pi_id, component_id, settings, threads):
+        super().__init__(pi_id, component_id, settings, threads)
+
+        self.simulated = settings.get('simulated', False)
+        if not self.simulated:
+            from actuators.four_segment_display import FourSegmentDisplay
+            self.segment_display = FourSegmentDisplay(component_id, settings['seg_p'], settings['dig_p'])
+        else:
+            self.segment_display = None
+
     def callback(self, first_digit, second_digit, third_digit, fourth_digit, verbose=False):
-        self.publish_measurements([('Digits', f"{first_digit}{second_digit}:{third_digit}{fourth_digit}")])
+        self.publish_measurements([('Time', f"{first_digit}{second_digit}:{third_digit}{fourth_digit}")])
+
+    def show_time(self):
+        blink = False
+        while not self.stop_event.is_set():
+            time.sleep(2)
+            n = time.ctime()[11:13] + time.ctime()[14:16]
+            s = str(n).rjust(4)
+
+            if not self.simulated:
+                self.segment_display.display_time(s)
+
+            self.callback(s[0], s[1], s[2], s[3])
 
     def run_loop(self):
-        if self.settings['simulated']:
-            thread = threading.Thread(target=simulate_four_segment_display, args=(self.callback, self.stop_event))
-        else:
-            from actuators.four_segment_display import FourSegmentDisplay, show_time_on_four_segment_display
-            four_segment_display = FourSegmentDisplay(self, self.settings["seg_pins"], self.settings["dig_pins"])
-            thread = threading.Thread(target=show_time_on_four_segment_display,
-                                      args=(four_segment_display, 2, self.callback, self.stop_event))
-
+        thread = threading.Thread(target=self.show_time, args=())
         thread.start()
         self.threads.append(thread)
