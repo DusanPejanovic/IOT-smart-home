@@ -19,32 +19,6 @@ try:
 except:
     pass
 
-threads = []
-
-
-def create_controller(component_type, pi_id, component_id, settings):
-    if component_type == "DHT":
-        return DHTController(pi_id, component_id, settings, threads)
-    elif component_type == "UDS":
-        return UDSController(pi_id, component_id, settings, threads)
-    elif component_type == "PIR":
-        return PirController(pi_id, component_id, settings, threads)
-    elif component_type == "BTN":
-        return ButtonController(pi_id, component_id, settings, threads)
-    elif component_type == "MSW":
-        return MSWController(pi_id, component_id, settings, threads)
-    else:
-        raise ValueError(f"Unknown component type: {component_type}")
-
-
-def run_controller(pi_id, component_id, settings):
-    if settings["type"] == "LED" or settings["type"] == "BZR":
-        return
-
-    controller = create_controller(settings["type"], pi_id, component_id, settings)
-    controller.run_loop()
-
-
 if __name__ == "__main__":
     settings = load_settings()
 
@@ -67,7 +41,7 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print('Stopping app')
         Controller.stop_event.set()
-        for t in threads:
+        for t in smart_home.threads:
             t.join()
     finally:
         try:
