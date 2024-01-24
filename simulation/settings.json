@@ -5,26 +5,31 @@
       "pin": 17,
       "type": "BTN"
     },
-    "DL1": {
+    "DL": {
       "simulated": true,
       "pin": 18,
       "type": "LED"
-    },
-    "DUS1": {
-      "simulated": true,
-      "trigger_pin": 23,
-      "echo_pin": 24,
-      "type": "UDS"
     },
     "DB": {
       "simulated": true,
       "pin": 18,
       "type": "BZR"
     },
-    "DPIR1": {
+    "RDHT1": {
       "simulated": true,
-      "pin": 8,
-      "type": "PIR"
+      "pin": 27,
+      "type": "DHT"
+    },
+    "RDHT2": {
+      "simulated": true,
+      "pin": 22,
+      "type": "DHT"
+    },
+    "DUS1": {
+      "simulated": true,
+      "trigger_pin": 23,
+      "echo_pin": 24,
+      "type": "UDS"
     },
     "DMS": {
       "simulated": true,
@@ -40,16 +45,6 @@
       "simulated": true,
       "pin": 11,
       "type": "PIR"
-    },
-    "RDHT1": {
-      "simulated": true,
-      "pin": 27,
-      "type": "DHT"
-    },
-    "RDHT2": {
-      "simulated": true,
-      "pin": 22,
-      "type": "DHT"
     }
   }
 }
