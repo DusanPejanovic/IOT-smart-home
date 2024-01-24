@@ -38,7 +38,7 @@ class MQTTPublisher:
                     "value": measurement[1],
                     "time": datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
                 }
-                cls.data_batch.append((measurement[0], json.dumps(payload), 0, True))
+                cls.data_batch.append((measurement[0], json.dumps(payload), 0, False))
                 cls.publish_data_counter += 1
 
             if cls.publish_data_counter >= cls.publish_data_limit:
