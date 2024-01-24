@@ -1,20 +1,17 @@
 import threading
 
 from controllers.controller import Controller
-from MQTT.mqtt_publisher import MQTTPublisher
 from simulators.btn_simulator import simulate_button_press
 
 
 class ButtonController(Controller):
-    def callback(self, pressed, verbose=False):
-        if verbose:
-            with self.console_lock:
-                print(self.get_basic_info())
-                if pressed:
-                    print("Button pressed!")
-                else:
-                    print("Button released!")
+    def __init__(self, pi_id, component_id, settings, threads, ds_callback):
+        super().__init__(pi_id, component_id, settings, threads)
+        self.ds_callback = ds_callback
+
+    def callback(self, pressed):
         self.publish_measurements([('Button', int(pressed))])
+        self.ds_callback()
 
     def run_loop(self):
         if self.settings['simulated']:

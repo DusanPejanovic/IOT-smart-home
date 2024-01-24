@@ -5,13 +5,13 @@ from simulators.msw_simulator import simulate_membrane_switch
 
 
 class MSWController(Controller):
-    def callback(self, key, verbose=False):
-        if verbose:
-            with self.console_lock:
-                print(self.get_basic_info())
-                print("Membrane switch activated.")
+    def __init__(self, pi_id, component_id, settings, threads, dms_callback):
+        super().__init__(pi_id, component_id, settings, threads)
+        self.dms_callback = dms_callback
 
+    def callback(self, key):
         self.publish_measurements([('Key', key)])
+        self.dms_callback(key)
 
     def run_loop(self):
         if self.settings['simulated']:

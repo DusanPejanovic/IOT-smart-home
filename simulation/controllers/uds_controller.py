@@ -5,6 +5,10 @@ from simulators.uds_simulator import simulate_uds_distance
 
 
 class UDSController(Controller):
+    def __init__(self, pi_id, component_id, settings, threads, uds_callback):
+        super().__init__(pi_id, component_id, settings, threads)
+        self.uds_callback = uds_callback
+
     def callback(self, distance, verbose=False):
         if verbose:
             with self.console_lock:
@@ -12,6 +16,7 @@ class UDSController(Controller):
                 print(f"Distance: {distance}%")
 
         self.publish_measurements([('Distance', distance)])
+        self.uds_callback(self.component_id, distance)
 
     def run_loop(self):
         if self.settings['simulated']:
