@@ -1,5 +1,6 @@
 import json
 import threading
+from datetime import datetime
 
 from paho.mqtt import publish
 
@@ -34,10 +35,11 @@ class MQTTPublisher:
                     "simulated": simulated,
                     "runs_on": pi_name,
                     "name": device_name,
-                    "value": measurement[1]
+                    "value": measurement[1],
+                    "time": datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
                 }
                 cls.data_batch.append((measurement[0], json.dumps(payload), 0, True))
                 cls.publish_data_counter += 1
 
-        if cls.publish_data_counter >= cls.publish_data_limit:
-            cls.publish_event.set()
+            if cls.publish_data_counter >= cls.publish_data_limit:
+                cls.publish_event.set()

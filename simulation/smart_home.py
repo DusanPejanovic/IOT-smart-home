@@ -17,7 +17,7 @@ class SmartHome:
         self.threads = []
 
         self.detected_people = 0
-        self.uds_measurements = {}
+        self.uds_measurements = {"DUS1": []}
 
     def create_controller(self, pi_id, component_type, component_id, settings):
         if component_type == "DHT":
@@ -31,9 +31,9 @@ class SmartHome:
         elif component_type == "MSW":
             self.sensors[component_id] = (MSWController(pi_id, component_id, settings, self.threads))
         elif component_type == "LED":
-            self.actuators[component_id] = (LEDController(pi_id, component_id, settings, self.threads))
+            self.actuators[component_id] = (LEDController(pi_id, component_id, settings['simulated'], self.threads))
         elif component_type == "BZR":
-            self.actuators[component_id] = (BuzzerController(pi_id, component_id, settings, self.threads))
+            self.actuators[component_id] = (BuzzerController(pi_id, component_id, settings['simulated'], self.threads))
         else:
             raise ValueError(f"Unknown component type: {component_type}")
 
@@ -42,12 +42,12 @@ class SmartHome:
             controller.run_loop()
 
     def turn_on_alarm(self):
-        print("Alarm turned on!")
+        pass
 
     def pir_callback(self, pir_id):
         pir_id_map = {
-            "DPIR1": ["LED1", "DUS1"],
-            "DPIR2": ["LED2", "DUS2"]
+            "DPIR1": ["DL1", "DUS1"],
+            "DPIR2": ["DL2", "DUS2"]
         }
 
         # If DPIR has detected

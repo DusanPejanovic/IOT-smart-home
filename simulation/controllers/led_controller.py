@@ -37,7 +37,8 @@ class LEDController:
 
     def turn_on(self):
         self.led_on = True
-        GPIO.output(self.pin, GPIO.HIGH)
+        if not self.simulated:
+            GPIO.output(self.pin, GPIO.HIGH)
         MQTTPublisher.process_and_batch_measurements(self.pi_id,
                                                      self.name,
                                                      [("Led", int(self.led_on))],
@@ -45,7 +46,8 @@ class LEDController:
 
     def turn_off(self):
         self.led_on = False
-        GPIO.output(self.pin, GPIO.LOW)
+        if not self.simulated:
+            GPIO.output(self.pin, GPIO.LOW)
         MQTTPublisher.process_and_batch_measurements(self.pi_id,
                                                      self.name,
                                                      [("Led", int(self.led_on))],
