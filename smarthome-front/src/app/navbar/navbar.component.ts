@@ -47,7 +47,6 @@ export class NavbarComponent implements OnInit {
 
     this.socket.on('alarm', (data: any) => {
       data = JSON.parse(data);
-      console.log(data["status"])
       this.isAlarmOn = data["status"] == "On";
 
     });
@@ -75,7 +74,7 @@ export class NavbarComponent implements OnInit {
   turnClockAlarmOff() {
     const environment = {
       production: false,
-      apiGateway: 'http://localhost:5001', // Replace this with your API Gateway URL
+      apiGateway: 'http://localhost:5001',
     };
     const options: any = {
       headers: new HttpHeaders({
@@ -95,7 +94,7 @@ export class NavbarComponent implements OnInit {
   turnAlarmOff() {
     const environment = {
       production: false,
-      apiGateway: 'http://localhost:5001', // Replace this with your API Gateway URL
+      apiGateway: 'http://localhost:5001',
     };
     const options: any = {
       headers: new HttpHeaders({

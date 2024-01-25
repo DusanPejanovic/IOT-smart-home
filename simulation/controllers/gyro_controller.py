@@ -24,7 +24,7 @@ class GyroController(Controller):
             from sensors.gyroscope.MPU6050 import MPU6050
             mpu = MPU6050()
             mpu.dmp_initialize()
-            thread = threading.Thread(target=run_gyro_loop, args=(mpu, 2, self.callback, self.stop_event))
+            thread = threading.Thread(target=run_gyro_loop, args=(mpu, 3, self.callback, self.stop_event))
 
         thread.start()
         self.threads.append(thread)

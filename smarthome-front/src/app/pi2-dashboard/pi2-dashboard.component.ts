@@ -10,7 +10,7 @@ import { BuzzerService } from 'src/services/buzzer.service';
   styleUrls: ['./pi2-dashboard.component.css', '../pi1-dashboard/pi1-dashboard.component.css']
 })
 export class Pi2DashboardComponent implements OnInit{
-  
+
   dht3: UpdateDTO[] = [];
   gdht: UpdateDTO[] = [];
   gyro: UpdateDTO[] = [];
@@ -33,29 +33,29 @@ export class Pi2DashboardComponent implements OnInit{
         console.log(err);
       },
     })
-    this.socket.on('update/PI2', (data: any) => {
+    this.socket.on('new-sensor-value/PI2', (data: any) => {
       data = JSON.parse(data);
-      
+
       switch (data["name"]) {
-        case "Room DHT3" :
+        case "RDHT3" :
           this.updateDHT(data, this.dht3);
           break;
-        case "Garage DHT" :
+        case "GDHT" :
           this.updateDHT(data, this.gdht);
           break;
-        case "Door Sensor 2":
+        case "DS2":
           this.ds2 = data;
           break;
-        case "Door Motion Sensor 2":
+        case "DPIR2":
             this.dpir2 = data;
             break;
-        case "Room PIR3":
+        case "RPIR3":
             this.rpir3 = data;
             break;
-        case "Door Ultrasonic Sensor":
+        case "DUS2":
           this.dus2 = data;
           break
-        case "Gun Safe Gyro":
+        case "GSG":
           this.updateGyro(data);
           break
       }

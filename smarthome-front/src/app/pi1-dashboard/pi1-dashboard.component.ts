@@ -102,6 +102,8 @@ export class Pi1DashboardComponent implements OnInit {
       dht[1] = data;
     }
   }
+
+    protected readonly parseFloat = parseFloat;
 }
 
 export interface UpdateDTO {

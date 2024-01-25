@@ -70,6 +70,7 @@ class SmartHome:
     def on_mqtt_connect(self, client, userdata, flags, rc):
         self.mqtt_client.subscribe("clock-alarm/on")
         self.mqtt_client.subscribe("clock-alarm/off")
+        self.mqtt_client.subscribe("alarm/off")
         self.mqtt_client.subscribe("rgb/color")
 
     def on_mqtt_message(self, client, userdata, msg):
@@ -81,7 +82,8 @@ class SmartHome:
         elif msg.topic == "clock-alarm/off":
             # Turn off Alarm
             AlarmClock.turn_off()
-
+        elif msg.topic == "alarm/off":
+            Alarm.deactivate_alarm()
         elif msg.topic == "rgb/color":
             payload = json.loads(msg.payload.decode())
             color = payload['color']

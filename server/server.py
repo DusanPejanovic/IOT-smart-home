@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import Flask, jsonify, request
 from flask_socketio import SocketIO
 from flask_cors import CORS
@@ -179,11 +181,12 @@ def clock_alarm_off():
 def alarm_off():
     write_api = influxdb_client.write_api(write_options=SYNCHRONOUS)
     try:
+        current_time = datetime.utcnow().isoformat("T") + "Z"
         point = (
             Point("alarm")
-            .tag("caused_by", "web")
-            .tag("message", "Alarms turned off by web app")
-            .field("status", "OFF")
+            .tag("type", "Deactivated")
+            .field("reason", "Deactivated by web.")
+            .time(current_time)
         )
         alarm_data = {
             "caused_by": "web",
@@ -191,8 +194,8 @@ def alarm_off():
             "status": "OFF"
         }
 
-        write_api.write(bucket="events", org=org, record=point)
-        mqtt_client.publish("topic/alarm/buzzer/off", json.dumps(alarm_data))
+        write_api.write(bucket=bucket, org=org, record=point)
+        mqtt_client.publish("alarm/off", json.dumps(alarm_data))
 
         return jsonify({'message': f'SUCCESS'}), 200
 

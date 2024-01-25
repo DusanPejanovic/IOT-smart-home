@@ -1,108 +1,114 @@
+/* New Navbar Container Style */
 .navbar-container {
-    height: 50px;
-    color: white !important;
-    margin: 0;
-    padding: 0 20px; 
-    box-sizing: border-box; 
+  background-color: #333;
+  /* Dark background */
+  color: #f2f2f2;
+  /* Light text */
+  height: 60px;
+  /* Increased height */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* Space between logo and nav items */
+  padding: 0 30px;
+  /* Increased padding */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* Subtle shadow */
 }
 
-.nav-logo {
-    float: left;
-    display: flex;
-    flex-direction: row;
-    justify-content: left;
-}
-
+/* Logo Style */
+.nav-logo,
 .nav-logo-alarm {
-    float: left;
-    display: flex;
-    flex-direction: row;
-    justify-content: left;
-    padding: 5px 10px;
-    border-radius: 10px;
-    height: 35px;
+  display: inline-block;
+  margin-right: 20px;
+  /* Spacing after logo */
+  font-size: 1.5em;
+  /* Larger font size */
+  color: #FF6B6B;
+  /* Accent color */
 }
 
-.red-border {
-    border: 2px solid #ef476f;
-}
-
+/* Nav Options Style */
 .nav-options {
-    float: right;
-    display: flex;
-    flex-direction: row;
+  display: flex;
+  align-items: center;
 }
 
-
-.nav-item {
-    cursor: pointer;
-    margin-left: 15px;
-    font-size: 1.1em;
-    border: 2px solid rgba(255, 255, 0, 0);
-    border-radius: 5px;
-    padding: 5px;
-    width: fit-content;
-    text-align: center;
+/* Nav Item Style */
+.nav-item,
+.nav-item-clock,
+.nav-item-clock-on {
+  cursor: pointer;
+  margin: 0 10px;
+  /* Spacing between items */
+  padding: 10px 15px;
+  /* Padding for better touch targets */
+  border-radius: 3px;
+  /* Rounded corners */
+  transition: background-color 0.3s, color 0.3s;
+  /* Smooth transition for hover effects */
 }
 
-.nav-item-clock {
-    cursor: pointer;
-    margin-left: 15px;
-    font-size: 1.3em;
-    border: 2px solid rgba(255, 255, 0, 0);
-    border-radius: 5px;
-    padding: 5px;
-    width: 30px;
-    text-align: center;
-}
-
-.nav-item-clock-on{
-    cursor: pointer;
-    margin-left: 15px;
-    font-size: 1.1em;
-    background-color: #ef476f;
-    border-radius: 5px;
-    padding: 5px;
-    width: 30px;
-    text-align: center;
-    color: white;
-    width: fit-content;
-}
-
+/* Hover and Selected State */
+.nav-item:hover,
+.nav-item-selected,
 .nav-item-clock:hover {
-    color: #FFCB52;
+  background-color: #FF6B6B;
+  /* Accent color */
+  color: #fff;
+  /* White text */
 }
 
-
-.nav-title {
-    font-weight: bold;
-    font-size: 1.4em;
+/* Clock Specific Styles */
+.nav-item-clock,
+.nav-item-clock-on {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: auto;
+  /* Auto width based on content */
 }
 
-.nav-item:hover {
-    border: 2px solid #ffcb5255;
+.nav-item-clock-on {
+  background-color: #4ECDC4;
+  /* Different accent color for 'on' state */
 }
 
-.nav-item-selected {
-    border: 2px solid #FFCB52 !important;
-}
-
-@keyframes shake {
-    0% { transform: translateX(0); }
-    20% { transform: translateX(-5px); }
-    40% { transform: translateX(5px); }
-    60% { transform: translateX(-5px); }
-    80% { transform: translateX(5px); }
-    100% { transform: translateX(0); }
+/* Keyframes for a simple 'fade' effect */
+@keyframes fade {
+  from {
+    opacity: 0;
   }
 
-  .shake-alarm {
-    animation: shake 1s ease-in-out infinite;
-
+  to {
+    opacity: 1;
   }
-  
-  .shake {
-    animation: shake 1s ease-in-out infinite;
-    color: #FFCB52 !important;
+}
+
+/* Applying fade effect to navbar */
+.navbar-container {
+  animation: fade 0.5s ease-in-out;
+}
+
+/* Removing shake animation for a cleaner look */
+.shake,
+.shake-alarm {
+  animation: none;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 600px) {
+  .navbar-container {
+    flex-direction: column;
+    height: auto;
+    /* Adjust height for stacked layout */
+    padding: 10px;
   }
 
+  .nav-options {
+    margin-top: 10px;
+    /* Space between logo and navigation items */
+    justify-content: center;
+    /* Center nav items */
+  }
+}
