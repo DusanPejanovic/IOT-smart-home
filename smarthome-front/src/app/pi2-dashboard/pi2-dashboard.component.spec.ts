@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Pi1Component } from './pi1.component';
+import { Pi2DashboardComponent } from './pi2-dashboard.component';
 
-describe('Pi1Component', () => {
-  let component: Pi1Component;
-  let fixture: ComponentFixture<Pi1Component>;
+describe('Pi2DashboardComponent', () => {
+  let component: Pi2DashboardComponent;
+  let fixture: ComponentFixture<Pi2DashboardComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ Pi1Component ]
+      declarations: [ Pi2DashboardComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Pi1Component);
+    fixture = TestBed.createComponent(Pi2DashboardComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

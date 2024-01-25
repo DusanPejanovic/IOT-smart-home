@@ -15,6 +15,7 @@ class UDSController(Controller):
                 print(self.get_basic_info())
                 print(f"Distance: {distance}%")
 
+        distance = round(distance, 2)
         self.publish_measurements([('Distance', distance)])
         self.uds_callback(self.component_id, distance)
 

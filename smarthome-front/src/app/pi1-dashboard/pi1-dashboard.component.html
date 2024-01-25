@@ -1,0 +1,110 @@
+<div style="margin: 20px;">
+
+  <!-- Row 1 -->
+  <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+
+    <!-- Card 1 -->
+    <div
+      style="background: #fff; border-radius: 8px; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); display: flex; padding: 20px; width: 48%; margin: 20px;">
+      <div style="flex: 1; font-size: 20px; font-family: 'Arial', sans-serif;">
+        <p>Door Light 1</p>
+        <p>{{ dl.datetime }}</p>
+        <p>{{ dl ? dl.value : "" }}</p>
+      </div>
+      <div style="flex: 2;">
+        <iframe
+          src="http://localhost:3000/d-solo/fbbb7394-4fa6-4bc7-9a7b-7bd062439d90/iot?orgId=1&from=1705850375678&to=1705871975678&panelId=1"
+          width="100%" height="300" frameborder="0"></iframe>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div
+      style="background: #fff; border-radius: 8px; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); display: flex; padding: 20px; width: 48%;  margin: 20px;">
+      <div style="flex: 1; font-size: 20px; font-family: 'Arial', sans-serif;">
+        <p>Digital Humidity</p>
+        <p>{{ dht1[1] ? dht1[1].value : "" }}%</p>
+      </div>
+      <div style="flex: 2;">
+        <iframe
+          src="http://localhost:3000/d-solo/fbbb7394-4fa6-4bc7-9a7b-7bd062439d90/iot?orgId=1&from=1705851481111&to=1705873081111&panelId=7"
+          width="100%" height="300" frameborder="0"></iframe>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Row 2 -->
+  <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+
+    <!-- Card 3 -->
+    <div
+      style="background: #fff; border-radius: 8px; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); display: flex; padding: 20px; width: 48%;  margin: 20px;">
+      <div style="flex: 1; font-size: 20px; font-family: 'Arial', sans-serif;">
+        <div><i></i></div>
+        <p>Room PIR 1</p>
+        <p>{{ rpir1.datetime }}</p>
+        <p>{{ rpir1.value ? rpir1.value : "none" }}</p>
+      </div>
+      <div style="flex: 2;">
+        <iframe
+          src="http://localhost:3000/d-solo/fbbb7394-4fa6-4bc7-9a7b-7bd062439d90/iot?orgId=1&from=1705852433580&to=1705874033580&panelId=4"
+          width="100%" height="300" frameborder="0"></iframe>
+      </div>
+    </div>
+
+    <!-- Card 4 -->
+    <div
+      style="background: #fff; border-radius: 8px; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); display: flex; padding: 20px; width: 48%;  margin: 20px;">
+      <div style="flex: 1; font-size: 20px; font-family: 'Arial', sans-serif;">
+        <p>Door Sensor 1</p>
+        <p>{{ "ENTERED" ? ds1.value == "pressed" : "CLOSED"}}</p>
+      </div>
+      <div style="flex: 2;">
+        <iframe
+          src="http://localhost:3000/d-solo/fbbb7394-4fa6-4bc7-9a7b-7bd062439d90/iot?orgId=1&from=1705852861226&to=1705874461226&panelId=6"
+          width="100%" height="300" frameborder="0"></iframe>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Row 3 -->
+  <div style="display: flex; justify-content: space-between;">
+
+    <!-- Card 5 -->
+    <div
+      style="background: #fff; border-radius: 8px; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); display: flex; padding: 20px; width: 48%;  margin: 20px;">
+      <div style="flex: 1; font-size: 20px; font-family: 'Arial', sans-serif;">
+        <p>Bedroom buzzer</p>
+        <p>{{ db.datetime }}</p>
+        <p>{{ db.value }}</p>
+      </div>
+      <div style="flex: 2;">
+        <iframe
+          src="http://localhost:3000/d-solo/fbbb7394-4fa6-4bc7-9a7b-7bd062439d90/iot?orgId=1&from=1705852433580&to=1705874033580&panelId=4"
+          width="100%" height="300" frameborder="0"></iframe>
+      </div>
+    </div>
+
+    <!-- Card 6 -->
+    <div
+      style="background: #fff; border-radius: 8px; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); display: flex; padding: 20px; width: 48%;  margin: 20px">
+      <div style="flex: 1; font-size: 20px; font-family: 'Arial', sans-serif;">
+        <div><i></i></div>
+        <p>Door Ultrasonic Sensor 1</p>
+        <div>
+          <p>{{ uds1.datetime }}</p>
+          <p>{{ uds1.value ? (parseFloat(uds1.value).toFixed(2)) + " cm" : "none" }}</p>
+        </div>
+      </div>
+      <div style="flex: 2;">
+        <iframe
+          src="http://localhost:3000/d-solo/fbbb7394-4fa6-4bc7-9a7b-7bd062439d90/iot?orgId=1&from=1705852566267&to=1705874166267&panelId=5"
+          width="100%" height="300" frameborder="0"></iframe>
+      </div>
+    </div>
+
+  </div>
+
+</div>

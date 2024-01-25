@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Pi3Component } from './pi3.component';
+import { AlarmsComponent } from './alarms.component';
 
-describe('Pi3Component', () => {
-  let component: Pi3Component;
-  let fixture: ComponentFixture<Pi3Component>;
+describe('AlarmsComponent', () => {
+  let component: AlarmsComponent;
+  let fixture: ComponentFixture<AlarmsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ Pi3Component ]
+      declarations: [ AlarmsComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Pi3Component);
+    fixture = TestBed.createComponent(AlarmsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import Flask, jsonify, request
 from flask_socketio import SocketIO
 from flask_cors import CORS
@@ -34,15 +36,41 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe("Buzzer")
     client.subscribe("Key")
 
-    client.subscribe("Alarm")
+    # Gyro
+    client.subscribe("Acceleration")
+    client.subscribe("Rotation")
+
+    client.subscribe("alarm")
+
+    # Status
+    client.subscribe("clock-alarm-status")
+    client.subscribe("alarm-status")
 
 
 def on_message(client, userdata, msg):
     data = json.loads(msg.payload.decode('utf-8'))
-    if msg.topic == "Alarm":
+    if msg.topic == "alarm":
         save_alarm_to_db(data)
+    elif msg.topic == "clock-alarm-status":
+        data = json.loads(msg.payload.decode('utf-8'))
+        try:
+            socketio.emit('clock-alarm', json.dumps({"status": data["status"]}))
+        except Exception as e:
+            print(str(e))
+    elif msg.topic == "alarm-status":
+        data = json.loads(msg.payload.decode('utf-8'))
+        try:
+            socketio.emit('alarm', json.dumps({"status": data["status"]}))
+        except Exception as e:
+            print(str(e))
+    elif msg.topic == "Acceleration" or msg.topic == "Rotation":
+        save_gsg_to_db(data)
     else:
         save_to_db(data)
+
+    # Update data for that sensor
+    if "new_sensor_value" in data and data["new_sensor_value"]:
+        send_new_sensor_value(data)
 
 
 mqtt_client.on_connect = on_connect
@@ -61,9 +89,20 @@ def save_to_db(data):
     )
     write_api.write(bucket=bucket, org=org, record=point)
 
-    # Update data for that sensor
-    if data["new_sensor_value"]:
-        send_new_sensor_value(data)
+
+def save_gsg_to_db(data):
+    for i, coord in enumerate(['x', 'y', 'z']):
+        write_api = influxdb_client.write_api(write_options=SYNCHRONOUS)
+        point = (
+            Point(data["measurement"])
+            .tag("simulated", data["simulated"])
+            .tag("runs_on", data["runs_on"])
+            .tag("name", data["name"])
+            .tag("coordinate", coord)
+            .field("measurement", data["value"][i])
+            .time(data["time"])
+        )
+        write_api.write(bucket=bucket, org=org, record=point)
 
 
 def save_alarm_to_db(data):
@@ -90,7 +129,7 @@ def handle_disconnect():
 
 def send_new_sensor_value(data):
     try:
-        socketio.emit('sensor_value/' + data['runs_on'], json.dumps(data))
+        socketio.emit('new-sensor-value/' + data['runs_on'], json.dumps(data))
     except Exception as e:
         print(str(e))
 
@@ -113,7 +152,7 @@ def update_rgb_color():
             print(f"Received color: {color}")
 
             mqtt_message = {"color": color}
-            mqtt_client.publish("topic/rgb/color", payload=json.dumps(mqtt_message))
+            mqtt_client.publish("rgb/color", payload=json.dumps(mqtt_message))
 
             return jsonify({'message': 'Color updated successfully'}), 200
         else:
@@ -128,31 +167,26 @@ def post_clock_alarm():
     data = request.get_json()
     date = data.get('params').get('date')
     time = data.get('params').get('time')
-    mqtt_client.publish("topic/clock-alarm/device/on", json.dumps(data.get('params')))
+    mqtt_client.publish("clock-alarm/on", json.dumps(data.get('params')))
     return jsonify({'message': f'Data received successfully. Date: {date}, Time: {time}'})
 
 
 @app.route('/clock-alarm/off', methods=['PUT'])
 def clock_alarm_off():
-    data = request.get_json()
-    print("clock alarm off")
-    mqtt_client.publish("topic/clock-alarm/device/off", json.dumps({"action": "off"}))
+    mqtt_client.publish("clock-alarm/off", json.dumps({"action": "Off"}))
     return jsonify({'message': f'Turn clock alarm off'})
 
 
 @app.route('/alarm/off', methods=['PUT'])
 def alarm_off():
-    data = request.get_json()
-    print("alarm off")
-    # mqtt_client.publish("topic/clock-alarm/device/off", json.dumps({"action": "off"}))
-
     write_api = influxdb_client.write_api(write_options=SYNCHRONOUS)
     try:
+        current_time = datetime.utcnow().isoformat("T") + "Z"
         point = (
             Point("alarm")
-            .tag("caused_by", "web")
-            .tag("message", "Alarms turned of by web app")
-            .field("status", "OFF")
+            .tag("type", "Deactivated")
+            .field("reason", "Deactivated by web.")
+            .time(current_time)
         )
         alarm_data = {
             "caused_by": "web",
@@ -160,8 +194,8 @@ def alarm_off():
             "status": "OFF"
         }
 
-        write_api.write(bucket="events", org=org, record=point)
-        mqtt_client.publish("topic/alarm/buzzer/off", json.dumps(alarm_data))
+        write_api.write(bucket=bucket, org=org, record=point)
+        mqtt_client.publish("alarm/off", json.dumps(alarm_data))
 
         return jsonify({'message': f'SUCCESS'}), 200
 
@@ -173,4 +207,4 @@ def alarm_off():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, use_reloader=False)
+    socketio.run(app, debug=True, port=5001, use_reloader=False)

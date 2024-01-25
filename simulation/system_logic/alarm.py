@@ -10,6 +10,17 @@ class Alarm:
     _reason = None
     _pin = "1234"
     _lock = threading.Lock()
+    _alarm_activation_listeners = []
+
+    @classmethod
+    def add_alarm_activation_listener(cls, listener):
+        with cls._lock:
+            cls._alarm_activation_listeners.append(listener)
+
+    @classmethod
+    def _notify_alarm_activation(cls):
+        for listener in cls._alarm_activation_listeners:
+            listener()
 
     @classmethod
     def activate_system(cls):
@@ -41,6 +52,7 @@ class Alarm:
         with cls._lock:
             cls._alarm_active = True
             cls._reason = reason
+            cls._notify_alarm_activation()
             MQTTPublisher.publish_alarm("Activated", reason)
 
     @classmethod
@@ -59,6 +71,25 @@ class Alarm:
             return cls._alarm_active
 
     @classmethod
+    def get_reason(cls):
+        with cls._lock:
+            return cls._reason
+
+    @classmethod
     def get_pin(cls):
         with cls._lock:
             return cls._pin
+
+    @classmethod
+    def run_loop(cls, stop_event):
+        while not stop_event.is_set():
+            time.sleep(1)
+            with cls._lock:
+                if cls._alarm_active:
+                    MQTTPublisher.publish_alarm_event("On")
+                else:
+                    MQTTPublisher.publish_alarm_event("Off")
+
+
+
+

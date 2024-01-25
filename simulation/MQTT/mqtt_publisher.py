@@ -36,6 +36,7 @@ class MQTTPublisher:
                     "runs_on": pi_name,
                     "name": device_name,
                     "value": measurement[1],
+                    "new_sensor_value": True,
                     "time": datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
                 }
                 cls.data_batch.append((measurement[0], json.dumps(payload), 0, False))
@@ -52,5 +53,14 @@ class MQTTPublisher:
             "reason": reason,
             "time": datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
         }
-        publish.single("Alarm", json.dumps(payload), hostname=HOSTNAME, port=PORT)
-        print("Alarm published")
+        publish.single("alarm", json.dumps(payload), hostname=HOSTNAME, port=PORT)
+
+    @classmethod
+    def publish_alarm_event(cls, status):
+        payload = {"status": status}
+        publish.single("alarm-status", json.dumps(payload), hostname=HOSTNAME, port=PORT)
+
+    @classmethod
+    def publish_clock_alarm_event(cls, status):
+        payload = {"status": status}
+        publish.single("clock-alarm-status", json.dumps(payload), hostname=HOSTNAME, port=PORT)

@@ -42,8 +42,9 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print('Stopping app')
         Controller.stop_event.set()
-        for t in smart_home.threads:
-            t.join()
+        for i in range(smart_home.threads.get_len()):
+            if smart_home.threads.get(i).is_alive():
+                smart_home.threads.get(i).join()
     finally:
         try:
             GPIO.cleanup()

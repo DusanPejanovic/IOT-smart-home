@@ -2,6 +2,8 @@ import threading
 import time
 
 from controllers.controller import Controller
+from system_logic.alarm_clock import AlarmClock
+from utility.safe_print import SafePrint
 
 
 class FourSegmentDisplayController(Controller):
@@ -15,13 +17,15 @@ class FourSegmentDisplayController(Controller):
         else:
             self.segment_display = None
 
-    def callback(self, first_digit, second_digit, third_digit, fourth_digit, verbose=False):
+    def callback(self, first_digit, second_digit, third_digit, fourth_digit):
+        if AlarmClock.is_alarm_active():
+            SafePrint.print("B4SD is blinking.")
+
         self.publish_measurements([('Time', f"{first_digit}{second_digit}:{third_digit}{fourth_digit}")])
 
     def show_time(self):
-        blink = False
         while not self.stop_event.is_set():
-            time.sleep(2)
+            time.sleep(1)
             n = time.ctime()[11:13] + time.ctime()[14:16]
             s = str(n).rjust(4)
 

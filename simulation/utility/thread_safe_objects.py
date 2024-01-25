@@ -35,3 +35,21 @@ class Text:
     def get_value(self):
         with self.lock:
             return self.value
+
+
+class ThreadSafeList:
+    def __init__(self):
+        self.list = []
+        self.lock = threading.Lock()
+
+    def get_len(self):
+        with self.lock:
+            return len(self.list)
+
+    def append(self, item):
+        with self.lock:
+            self.list.append(item)
+
+    def get(self, index):
+        with self.lock:
+            return self.list[index]

@@ -1,0 +1,114 @@
+/* New Navbar Container Style */
+.navbar-container {
+  background-color: #333;
+  /* Dark background */
+  color: #f2f2f2;
+  /* Light text */
+  height: 60px;
+  /* Increased height */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* Space between logo and nav items */
+  padding: 0 30px;
+  /* Increased padding */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* Subtle shadow */
+}
+
+/* Logo Style */
+.nav-logo,
+.nav-logo-alarm {
+  display: inline-block;
+  margin-right: 20px;
+  /* Spacing after logo */
+  font-size: 1.5em;
+  /* Larger font size */
+  color: #FF6B6B;
+  /* Accent color */
+}
+
+/* Nav Options Style */
+.nav-options {
+  display: flex;
+  align-items: center;
+}
+
+/* Nav Item Style */
+.nav-item,
+.nav-item-clock,
+.nav-item-clock-on {
+  cursor: pointer;
+  margin: 0 10px;
+  /* Spacing between items */
+  padding: 10px 15px;
+  /* Padding for better touch targets */
+  border-radius: 3px;
+  /* Rounded corners */
+  transition: background-color 0.3s, color 0.3s;
+  /* Smooth transition for hover effects */
+}
+
+/* Hover and Selected State */
+.nav-item:hover,
+.nav-item-selected,
+.nav-item-clock:hover {
+  background-color: #FF6B6B;
+  /* Accent color */
+  color: #fff;
+  /* White text */
+}
+
+/* Clock Specific Styles */
+.nav-item-clock,
+.nav-item-clock-on {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: auto;
+  /* Auto width based on content */
+}
+
+.nav-item-clock-on {
+  background-color: #4ECDC4;
+  /* Different accent color for 'on' state */
+}
+
+/* Keyframes for a simple 'fade' effect */
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* Applying fade effect to navbar */
+.navbar-container {
+  animation: fade 0.5s ease-in-out;
+}
+
+/* Removing shake animation for a cleaner look */
+.shake,
+.shake-alarm {
+  animation: none;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 600px) {
+  .navbar-container {
+    flex-direction: column;
+    height: auto;
+    /* Adjust height for stacked layout */
+    padding: 10px;
+  }
+
+  .nav-options {
+    margin-top: 10px;
+    /* Space between logo and navigation items */
+    justify-content: center;
+    /* Center nav items */
+  }
+}
