@@ -38,6 +38,9 @@ class LEDController(Controller):
             if not self.led_on:
                 return
 
+        if not self.simulated:
+            self.led.turn_off()
+
         self.callback(False)
 
     def run_loop(self):
@@ -49,4 +52,5 @@ class LEDController(Controller):
                 return
 
         self.turn_on()
+        time.sleep(10)
         self.turn_off()

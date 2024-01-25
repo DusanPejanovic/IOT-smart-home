@@ -13,9 +13,11 @@ class FourSegmentDisplayController(Controller):
         self.simulated = settings.get('simulated', False)
         if not self.simulated:
             from actuators.four_segment_display import FourSegmentDisplay
-            self.segment_display = FourSegmentDisplay(component_id, settings['seg_p'], settings['dig_p'])
+            self.segment_display = FourSegmentDisplay(component_id, settings['seg_pins'], settings['dig_pins'])
         else:
             self.segment_display = None
+
+        self.run_loop()
 
     def callback(self, first_digit, second_digit, third_digit, fourth_digit):
         if AlarmClock.is_alarm_active():
@@ -25,7 +27,7 @@ class FourSegmentDisplayController(Controller):
 
     def show_time(self):
         while not self.stop_event.is_set():
-            time.sleep(1)
+            time.sleep(2)
             n = time.ctime()[11:13] + time.ctime()[14:16]
             s = str(n).rjust(4)
 

@@ -48,7 +48,7 @@ export class Pi1DashboardComponent implements OnInit {
         case "RDHT2" :
           this.updateDHT(data, this.dht2);
           break;
-        case "DL1":
+        case "DL":
           this.dl = data;
           break;
         case "DUS1":

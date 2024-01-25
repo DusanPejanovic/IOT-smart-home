@@ -36,6 +36,19 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe("Buzzer")
     client.subscribe("Key")
 
+    # B4SD
+    client.subscribe("Time")
+
+    # RGB
+    client.subscribe("Color")
+    client.subscribe("Active")
+
+    # IR receiver
+    client.subscribe("Command")
+
+    # LCD
+    client.subscribe("Text")
+
     # Gyro
     client.subscribe("Acceleration")
     client.subscribe("Rotation")
@@ -183,7 +196,7 @@ def alarm_off():
     try:
         current_time = datetime.utcnow().isoformat("T") + "Z"
         point = (
-            Point("alarm")
+            Point("Alarm")
             .tag("type", "Deactivated")
             .field("reason", "Deactivated by web.")
             .time(current_time)

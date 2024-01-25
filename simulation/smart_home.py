@@ -1,7 +1,6 @@
 import json
 import math
 import threading
-import time
 from datetime import datetime, timedelta
 
 import paho.mqtt.client as mqtt
@@ -11,10 +10,14 @@ from controllers.btn_controller import ButtonController
 from controllers.buzzer_controller import BuzzerController
 from controllers.controller import Controller
 from controllers.dht_controller import DHTController
+from controllers.four_segment_display_controller import FourSegmentDisplayController
 from controllers.gyro_controller import GyroController
+from controllers.ir_receiver_controller import IRReceiverController
+from controllers.lcd_controller import LCDController
 from controllers.led_controller import LEDController
 from controllers.msw_controller import MSWController
 from controllers.pir_controller import PirController
+from controllers.rgb_diode_controller import RGBDiodeController
 from controllers.uds_controller import UDSController
 from system_logic.alarm import Alarm
 from system_logic.alarm_clock import AlarmClock
@@ -96,7 +99,7 @@ class SmartHome:
 
     def create_controller(self, pi_id, component_type, component_id, settings):
         if component_type == "DHT":
-            self.sensors[component_id] = (DHTController(pi_id, component_id, settings, self.threads))
+            self.sensors[component_id] = (DHTController(pi_id, component_id, settings, self.threads, self.dht_callback))
         elif component_type == "UDS":
             self.sensors[component_id] = (UDSController(pi_id, component_id, settings, self.threads, self.uds_callback))
         elif component_type == "PIR":
@@ -107,12 +110,20 @@ class SmartHome:
                                  self.last_released_time))
         elif component_type == "MSW":
             self.sensors[component_id] = (MSWController(pi_id, component_id, settings, self.threads, self.dms_callback))
+        elif component_type == "GSG":
+            self.sensors[component_id] = (GyroController(pi_id, component_id, settings, self.threads))
+        elif component_type == "IR":
+            self.sensors[component_id] = (IRReceiverController(pi_id, component_id, settings, self.threads, self.ir_callback))
         elif component_type == "LED":
             self.actuators[component_id] = (LEDController(pi_id, component_id, settings, self.threads))
         elif component_type == "BZR":
             self.actuators[component_id] = (BuzzerController(pi_id, component_id, settings, self.threads))
-        elif component_type == "GSG":
-            self.sensors[component_id] = (GyroController(pi_id, component_id, settings, self.threads))
+        elif component_type == "LCD":
+            self.actuators[component_id] = (LCDController(pi_id, component_id, settings, self.threads))
+        elif component_type == "RGB":
+            self.actuators[component_id] = (RGBDiodeController(pi_id, component_id, settings, self.threads))
+        elif component_type == "SGD":
+            self.actuators[component_id] = (FourSegmentDisplayController(pi_id, component_id, settings, self.threads))
         else:
             raise ValueError(f"Unknown component type: {component_type}")
 
@@ -122,20 +133,22 @@ class SmartHome:
 
     def pir_callback(self, pir_id):
         pir_id_map = {
-            "DPIR1": ["DL1", "DUS1"],
-            "DPIR2": ["DL2", "DUS2"]
+            "DPIR1": "DUS1",
+            "DPIR2": "DUS2"
         }
 
-        # If DPIR has detected
-        if pir_id in pir_id_map.keys():
-            led_id, uds_id = pir_id_map[pir_id]
-
-            try:
-                # Turn on led for 10 seconds
-                led_simulation = threading.Thread(target=self.actuators[led_id].turn_on_off_simulation, args=())
+        if pir_id == "DPIR1":
+            # Turn on led for 10 seconds
+            if "DL" in self.actuators:
+                led_simulation = threading.Thread(target=self.actuators["DL"].turn_on_off_simulation, args=())
                 led_simulation.start()
                 self.threads.append(led_simulation)
 
+        # If DPIR has detected
+        if pir_id in pir_id_map.keys():
+            uds_id = pir_id_map[pir_id]
+
+            try:
                 # Update detected people count
                 measurements = self.uds_measurements[uds_id]
                 if len(measurements) >= 4:
@@ -175,7 +188,7 @@ class SmartHome:
                 Alarm.deactivate_alarm()
         elif ds_id == "DS2":
             self.last_ds2_release = datetime.now()
-            if Alarm.get_reason() == "DS2 hold for too long!":
+            if Alarm.get_reason() == "DS2 held for too long!":
                 Alarm.deactivate_alarm()
 
     def dms_callback(self, key):
@@ -202,20 +215,23 @@ class SmartHome:
 
     def dht_callback(self, dht_id, humidity, temperature):
         if dht_id == "GDHT":
-            self.actuators["GLCD"].display_dht_values(temperature, humidity)
+            if 'GLCD' in self.actuators:
+                self.actuators["GLCD"].display_dht_values(temperature, humidity)
 
     def alarm_buzzer_check(self):
         # Door Buzzer
-        door_buzzer = self.actuators['DB']
-        door_buzzer_thread = threading.Thread(target=door_buzzer.run_alarm_buzzer, args=(Controller.stop_event,))
-        door_buzzer_thread.start()
-        self.threads.append(door_buzzer_thread)
+        if 'DB' in self.actuators:
+            door_buzzer = self.actuators['DB']
+            door_buzzer_thread = threading.Thread(target=door_buzzer.run_alarm_buzzer, args=(Controller.stop_event,))
+            door_buzzer_thread.start()
+            self.threads.append(door_buzzer_thread)
 
         # Bedroom Buzzer
-        bedroom_buzzer = self.actuators['BB']
-        bedroom_buzzer = threading.Thread(target=bedroom_buzzer.run_alarm_buzzer, args=(Controller.stop_event,))
-        bedroom_buzzer.start()
-        self.threads.append(bedroom_buzzer)
+        if 'BB' in self.actuators:
+            bedroom_buzzer = self.actuators['BB']
+            bedroom_buzzer = threading.Thread(target=bedroom_buzzer.run_alarm_buzzer, args=(Controller.stop_event,))
+            bedroom_buzzer.start()
+            self.threads.append(bedroom_buzzer)
 
     def alarm_clock_buzzer_check(self):
         # Bedroom Buzzer
@@ -223,3 +239,19 @@ class SmartHome:
         bedroom_buzzer = threading.Thread(target=bedroom_buzzer.run_alarm_clock_buzzer, args=(Controller.stop_event,))
         bedroom_buzzer.start()
         self.threads.append(bedroom_buzzer)
+
+    def ir_callback(self, command):
+        if 'BRGB' not in self.actuators:
+            return
+
+        if command == "OK":
+            self.actuators['BRGB'].switch_state()
+
+        if command == "1":
+            self.actuators['BRGB'].change_color("RED")
+
+        if command == "2":
+            self.actuators['BRGB'].change_color("GREEN")
+
+        if command == "3":
+            self.actuators['BRGB'].change_color("BLUE")

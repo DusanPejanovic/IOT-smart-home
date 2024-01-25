@@ -46,7 +46,7 @@ class Alarm:
 
     @classmethod
     def activate_alarm(cls, reason):
-        if cls._alarm_active:
+        if cls._alarm_active or not cls._system_active:
             return
 
         with cls._lock:
@@ -64,6 +64,8 @@ class Alarm:
             cls._system_active = False
             cls._alarm_active = False
             cls._reason = None
+
+            MQTTPublisher.publish_alarm("Deactivated", "From Pi")
 
     @classmethod
     def alarm_activated(cls):

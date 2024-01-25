@@ -31,24 +31,24 @@ export class Pi3DashboardComponent {
         console.log(err);
       },
     })
-    this.socket.on('update/PI3', (data: any) => {
+    this.socket.on('new-sensor-value/PI3', (data: any) => {
       data = JSON.parse(data);
-      
+
       switch (data["name"]) {
-        case "Room DHT4" :
+        case "RDHT4" :
           this.updateDHT(data, this.dht4);
           break;
-        case "Room PIR4":
+        case "RPIR4":
           this.rpir4 = data;
           break;
-        case "Bedroom Buzzer":
+        case "BB":
           this.bb = data;
           break;
-        case "Bedroom RGB diode":
+        case "BRGB":
           this.rgb = data;
           this.colorService.updateRgbColor(this.rgb.value);
           break;
-          
+
       }
       // Handle received data
       console.log('Received Socket.IO message:', data);

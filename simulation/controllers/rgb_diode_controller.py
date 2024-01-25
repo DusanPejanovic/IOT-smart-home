@@ -20,7 +20,7 @@ class RGBDiodeController(Controller):
     def callback(self, color, state):
         self.color = color
         self.led_on = state
-        self.publish_measurements([('Color', color), ('On', color)])
+        self.publish_measurements([('Color', color), ('Active', self.led_on)])
 
     def turn_on(self):
         if self.led_on:
@@ -46,6 +46,16 @@ class RGBDiodeController(Controller):
             self.rgb_diode.turn_off()
 
         self.callback(self.color, False)
+
+    def switch_state(self):
+        self.led_on = not self.led_on
+        if not self.simulated:
+            if self.led_on:
+                self.rgb_diode.turn_off()
+            else:
+                self.rgb_diode.turn_on()
+
+        self.callback(self.color, self.led_on)
 
     def change_color(self, color):
         if self.color == color:

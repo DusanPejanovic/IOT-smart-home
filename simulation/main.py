@@ -33,7 +33,9 @@ if __name__ == "__main__":
     try:
         for pi_id, pi_settings in settings.items():
             for component_id, component_settings in pi_settings.items():
-                smart_home.create_controller(pi_id, component_settings['type'], component_id, component_settings)
+                if component_settings['running']:
+                    print(component_settings)
+                    smart_home.create_controller(pi_id, component_settings['type'], component_id, component_settings)
         smart_home.start()
 
         ControllerRegistry().print_controllers()
