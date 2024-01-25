@@ -1,6 +1,8 @@
 import RPi.GPIO as GPIO
 import time
 
+from system_logic.alarm_clock import AlarmClock
+
 num = {' ': (0, 0, 0, 0, 0, 0, 0),
        '0': (1, 1, 1, 1, 1, 1, 0),
        '1': (0, 1, 1, 0, 0, 0, 0),
@@ -38,9 +40,19 @@ class FourSegmentDisplay:
                     GPIO.output(25, 1)
                 else:
                     GPIO.output(25, 0)
+
             GPIO.output(self.digit_pins[digit], 0)
+
+        display_duration = 0.5
+        if AlarmClock.is_alarm_active():
+            time.sleep(display_duration)
+
+        for digit in range(4):
             time.sleep(0.001)
             GPIO.output(self.digit_pins[digit], 1)
+
+        if AlarmClock.is_alarm_active():
+            time.sleep(display_duration)
 
 
 def show_time_on_four_segment_display(segment_display, delay, callback, stop_event):

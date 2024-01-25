@@ -2,6 +2,9 @@ import threading
 import time
 
 from MQTT.mqtt_publisher import MQTTPublisher
+from controllers.controller import Controller
+from system_logic.alarm import Alarm
+from system_logic.alarm_clock import AlarmClock
 
 try:
     import RPi.GPIO as GPIO
@@ -9,46 +12,59 @@ except ImportError:
     pass
 
 
-class BuzzerController:
-    def __init__(self, pi_id, name, simulated, pin=0):
-        self.pi_id = pi_id
-        self.name = name
-        self.buzzer_on = False
-        self.simulated = simulated
-        self.pin = pin
-        self.buzz = None
-        if not simulated:
-            self.setup()
+class BuzzerController(Controller):
+    def __init__(self, pi_id, component_id, settings, threads):
+        super().__init__(pi_id, component_id, settings, threads)
 
-    def setup(self):
-        GPIO.setup(self.pin, GPIO.OUT)
-        self.buzz = GPIO.PWM(self.pin, 440)
-
-    def buzzer_info(self):
-        with threading.Lock():
-            t = time.localtime()
-            print()
-            print("= " * 20)
-            print(f"Pi id: {self.pi_id}")
-            print(f"Component name: {self.name}")
-            print(f"Timestamp: {time.strftime('%H:%M:%S', t)}")
-            if self.buzzer_on:
-                print(f"Buzzer turned on!")
-            else:
-                print(f"Buzzer turned off!")
-
-    def change_buzzer_state(self):
-        if self.simulated:
-            self.buzzer_on = not self.buzzer_on
-            self.buzzer_info()
+        self.simulated = settings.get('simulated', False)
+        if not self.simulated:
+            from actuators.lcd.buzzer import Buzzer
+            self.buzzer = Buzzer(component_id, settings['pin'], 1)
         else:
-            if self.buzzer_on:
-                self.buzz.stop()
-            else:
-                self.buzz.start(50)
-            self.buzzer_on = not self.buzzer_on
+            self.buzzer = None
+        self.buzzer_on = False
 
-        MQTTPublisher.process_and_batch_measurements(self.pi_id,
-                                                     self.name,
-                                                     [("Buzzer", int(self.buzzer_on))],
-                                                     self.simulated)
+    def callback(self, buzzer_on):
+        self.publish_measurements([("Buzzer", int(buzzer_on))])
+
+    def run_alarm_buzzer(self, stop_event):
+        if self.buzzer_on:
+            return
+
+        if not self.simulated:
+            self.buzzer.turn_on()
+        self.callback(True)
+
+        while Alarm.alarm_activated() and not stop_event.is_set():
+            time.sleep(0.5)
+            if not self.simulated:
+                self.buzzer.buzz(0.1)
+        if not self.simulated:
+            self.buzzer.turn_off()
+        self.callback(False)
+
+    def run_alarm_clock_buzzer(self, stop_event):
+        if self.buzzer_on:
+            return
+
+        if not self.simulated:
+            self.buzzer.turn_on()
+        self.callback(True)
+
+        while AlarmClock.is_alarm_active() and not stop_event.is_set():
+            time.sleep(0.5)
+            if not self.simulated:
+                self.buzzer.buzz(0.1)
+        if not self.simulated:
+            self.buzzer.turn_off()
+        self.callback(False)
+
+    #TODO
+    # def play_song(buzzer, song, song_stop_event, duration=1, pause=1):
+    #     for note in song:
+    #         if song_stop_event.is_set():
+    #             break
+    #         buzzer.buzz_note(notes[note['note']], note['duration'] * duration)
+    #         if song_stop_event.is_set():
+    #             break
+    #         time.sleep(note['duration'] * duration * pause)

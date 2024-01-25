@@ -2,7 +2,7 @@
   "PI1": {
     "DS1": {
       "simulated": true,
-      "pin": 17,
+      "pin": 22,
       "type": "BTN"
     },
     "DL1": {
@@ -18,7 +18,7 @@
     },
     "DB": {
       "simulated": true,
-      "pin": 18,
+      "pin": 25,
       "type": "BZR"
     },
     "DPIR1": {
@@ -50,6 +50,21 @@
       "simulated": true,
       "pin": 22,
       "type": "DHT"
+    }
+  },
+  "PI2": {
+    "GSG": {
+      "simulated": true,
+      "pin_sda": 2,
+      "pin_slc": 3,
+      "type": "GSG"
+    }
+  },
+  "PI3": {
+    "BB": {
+      "simulated": true,
+      "pin": 21,
+      "type": "BZR"
     }
   }
 }
