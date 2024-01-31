@@ -10,6 +10,7 @@ class MSWController(Controller):
         self.dms_callback = dms_callback
 
     def callback(self, key):
+        print("USO", key)
         self.publish_measurements([('Key', key)])
         self.dms_callback(key)
 
@@ -18,7 +19,7 @@ class MSWController(Controller):
             thread = threading.Thread(target=simulate_membrane_switch, args=(2, self.callback, self.stop_event))
         else:
             from sensors.msw_sensor import MembraneSwitch, run_membrane_switch_loop
-            switch = MembraneSwitch(self.settings['pin'], self.settings['r_pins'], self.settings['c_pins'])
+            switch = MembraneSwitch(self.component_id, self.settings['r_pins'], self.settings['c_pins'])
             thread = threading.Thread(target=run_membrane_switch_loop, args=(switch, 2, self.callback, self.stop_event))
 
         thread.start()

@@ -6,7 +6,7 @@
     <!-- Card 1 -->
     <div
       style="background: #fff; border-radius: 8px; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); display: flex; padding: 20px; width: 48%; margin: 20px;">
-      <div style="flex: 1; font-size: 20px; font-family: 'Arial', sans-serif;">
+      <div style="flex: 1; font-size: 20px;">
         <p>Door Light 1</p>
         <p>{{ dl.datetime }}</p>
         <p>{{ dl ? dl.value : "" }}</p>
@@ -21,14 +21,12 @@
     <!-- Card 2 -->
     <div
       style="background: #fff; border-radius: 8px; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); display: flex; padding: 20px; width: 48%;  margin: 20px;">
-      <div style="flex: 1; font-size: 20px; font-family: 'Arial', sans-serif;">
+      <div style="flex: 1; font-size: 20px; ">
         <p>Digital Humidity</p>
         <p>{{ dht1[1] ? dht1[1].value : "" }}%</p>
       </div>
       <div style="flex: 2;">
-        <iframe
-          src="http://localhost:3000/d-solo/fbbb7394-4fa6-4bc7-9a7b-7bd062439d90/iot?orgId=1&from=1705851481111&to=1705873081111&panelId=7"
-          width="100%" height="300" frameborder="0"></iframe>
+        <iframe src="http://localhost:3000/d-solo/d95dc9e5-0279-415c-93b6-46af92f87875/kt2?orgId=1&from=1706183206865&to=1706183506865&panelId=8" width="450" height="200" frameborder="0"></iframe>
       </div>
     </div>
 
@@ -40,7 +38,7 @@
     <!-- Card 3 -->
     <div
       style="background: #fff; border-radius: 8px; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); display: flex; padding: 20px; width: 48%;  margin: 20px;">
-      <div style="flex: 1; font-size: 20px; font-family: 'Arial', sans-serif;">
+      <div style="flex: 1; font-size: 20px; ">
         <div><i></i></div>
         <p>Room PIR 1</p>
         <p>{{ rpir1.datetime }}</p>
@@ -56,7 +54,7 @@
     <!-- Card 4 -->
     <div
       style="background: #fff; border-radius: 8px; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); display: flex; padding: 20px; width: 48%;  margin: 20px;">
-      <div style="flex: 1; font-size: 20px; font-family: 'Arial', sans-serif;">
+      <div style="flex: 1; font-size: 20px;">
         <p>Door Sensor 1</p>
         <p>{{ "ENTERED" ? ds1.value == "pressed" : "CLOSED" }}</p>
       </div>
@@ -73,7 +71,7 @@
     <!-- Card 5 -->
     <div
       style="background: #fff; border-radius: 8px; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); display: flex; padding: 20px; width: 48%;  margin: 20px;">
-      <div style="flex: 1; font-size: 20px; font-family: 'Arial', sans-serif;">
+      <div style="flex: 1; font-size: 20px;">
         <p>Bedroom buzzer</p>
         <p>{{ db.datetime }}</p>
         <p>{{ db.value }}</p>
@@ -86,7 +84,7 @@
     <!-- Card 6 -->
     <div
       style="background: #fff; border-radius: 8px; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); display: flex; padding: 20px; width: 48%;  margin: 20px">
-      <div style="flex: 1; font-size: 20px; font-family: 'Arial', sans-serif;">
+      <div style="flex: 1; font-size: 20px; ">
         <div><i></i></div>
         <p>Door Ultrasonic Sensor 1</p>
         <div>

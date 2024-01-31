@@ -88,6 +88,9 @@ class SmartHome:
         elif msg.topic == "alarm/off":
             Alarm.deactivate_alarm()
         elif msg.topic == "rgb/color":
+            if 'BRGB' not in self.actuators:
+                return
+
             payload = json.loads(msg.payload.decode())
             color = payload['color']
             if color == "OFF":

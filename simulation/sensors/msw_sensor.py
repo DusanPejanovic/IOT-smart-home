@@ -7,6 +7,7 @@ class MembraneSwitch:
         self.id = id
         self.r_pins = r_pins
         self.c_pins = c_pins
+        self.setup()
 
     def setup(self):
         for r_pin in self.r_pins:

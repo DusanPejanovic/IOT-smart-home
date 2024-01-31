@@ -48,29 +48,26 @@ class RGBDiodeController(Controller):
         self.callback(self.color, False)
 
     def switch_state(self):
-        self.led_on = not self.led_on
         if not self.simulated:
             if self.led_on:
                 self.rgb_diode.turn_off()
             else:
                 self.rgb_diode.turn_on()
 
-        self.callback(self.color, self.led_on)
+        self.callback(self.color, not self.led_on)
 
     def change_color(self, color):
-        if self.color == color:
-            return
-
-        if not self.simulated and self.led_on:
-            if self.color == "RED":
+        if not self.simulated:
+            if color == "RED":
                 self.rgb_diode.turn_red()
-            elif self.color == "GREEN":
+            elif color == "GREEN":
                 self.rgb_diode.turn_green()
-            elif self.color == "BLUE":
+            elif color == "BLUE":
                 self.rgb_diode.turn_blue()
-            elif self.color == "WHITE":
+            elif color == "WHITE":
                 self.rgb_diode.turn_white()
 
+        self.led_on = True
         self.callback(color, self.led_on)
 
     def run_loop(self):

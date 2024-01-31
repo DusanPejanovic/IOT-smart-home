@@ -1,71 +1,67 @@
-<div class="dashboard-container">
-    <div class="dashboard-row">
-        <div class="group-container">
-            <div class="circle rectangular-container">
-                <p class="device-tag">RDHT4</p>
-                <p class="value">{{ dht4[0] ? dht4[0].value : "" }}C</p>
-                <p class="value-2">{{ dht4[1] ? dht4[1].value : ""  }}%</p>
+<div style="margin: 20px;">
 
-            </div>
-        </div>
+  <!-- Row 1 -->
+  <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
 
-        <div class="iframe-cont">
-            <iframe src="http://localhost:3000/d-solo/fbbb7394-4fa6-4bc7-9a7b-7bd062439d90/iot?orgId=1&from=1705850375678&to=1705871975678&panelId=1" width="450" height="200" frameborder="0"></iframe>
+    <!-- Card 1 -->
+    <div
+      style="background: #fff; border-radius: 8px; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); display: flex; padding: 20px; width: 48%; margin: 20px;">
+      <div style="flex: 1; font-size: 20px;">
+        <div>
+          <p>RDHT4</p>
+          <p>{{ dht4[0] ? dht4[0].value : "" }}C</p>
+          <p>{{ dht4[1] ? dht4[1].value : "" }}%</p>
         </div>
-
-        <div class="iframe-cont">
-            <iframe src="http://localhost:3000/d-solo/fbbb7394-4fa6-4bc7-9a7b-7bd062439d90/iot?orgId=1&from=1705850375678&to=1705871975678&panelId=1" width="450" height="200" frameborder="0"></iframe>
-        </div>
-    </div>
-    <div class="dashboard-row">
-        <div class="group-container">
-            <div class="light-blue-border rectangular-container wider">
-                <div class="cont-icon"><i class="light-blue fa-solid fa-person-walking"></i></div>
-                <p class="timestamp">{{  rpir4.datetime }}</p>
-                <p class="value">{{ rpir4.value ? rpir4.value : "none" }}</p>
-                <p class="device-tag" style="background-color: #FFCB52 !important;">RPIR4</p>
-            </div>
-        </div>
-
-        <div class="iframe-cont">
-            <iframe class=" frame-wider" src="http://localhost:3000/d-solo/fbbb7394-4fa6-4bc7-9a7b-7bd062439d90/iot?orgId=1&from=1705852433580&to=1705874033580&panelId=4" width="450" height="200" frameborder="0"></iframe>
-        </div>
-
-    </div>
-    <div class="dashboard-row">
-        <div class="group-container">
-            <div class="yellow-border rectangular-container wider">
-                <div class="cont-icon"><i class="yellow fa-solid fa-lightbulb"></i></div>
-                <p class="timestamp">{{ rgb.datetime }}</p>
-                <p class="value">{{ rgb.value? rgb.value: "" }}</p>
-                <p class="device-tag">BRGB</p>
-            </div>
-        </div>
-
-        <div class="iframe-cont">
-            <iframe class=" frame-wider" src="http://localhost:3000/d-solo/fbbb7394-4fa6-4bc7-9a7b-7bd062439d90/iot?orgId=1&from=1705852433580&to=1705874033580&panelId=4" width="450" height="200" frameborder="0"></iframe>
-        </div>
-
+      </div>
+      <div style="flex: 2;">
+        <iframe src="http://localhost:3000/d-solo/d95dc9e5-0279-415c-93b6-46af92f87875/kt2?orgId=1&from=1706184259164&to=1706184559164&panelId=28" width="450" height="200" frameborder="0"></iframe>
+      </div>
     </div>
 
-    <div class="dashboard-row">
-        <div class="group-container">
-            <div class="green-border rectangular-container wider">
-                <div class="cont-icon"><i class="green fa-solid fa-music"></i></div>
-                <p class="timestamp">{{  bb.datetime }}</p>
-                <p class="value">{{ bb.value }}</p>
-                <p class="device-tag" style="background-color: #2C87D7 !important;">BB</p>
-            </div>
+    <!-- Card 2 -->
+    <div
+      style="background: #fff; border-radius: 8px; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); display: flex; padding: 20px; width: 48%;  margin: 20px;">
+      <div style="flex: 1; font-size: 20px; ">
+        <div>
+          <p>{{ rpir4.datetime }}</p>
+          <p>{{ rpir4.value ? rpir4.value : "none" }}</p>
+          <p>RPIR4</p>
         </div>
-
-        <div class="iframe-cont">
-            <iframe class=" frame-wider" src="http://localhost:3000/d-solo/fbbb7394-4fa6-4bc7-9a7b-7bd062439d90/iot?orgId=1&from=1705852433580&to=1705874033580&panelId=4" width="450" height="200" frameborder="0"></iframe>
-        </div>
-
+      </div>
+      <div style="flex: 2;">
+        <iframe src="http://localhost:3000/d-solo/d95dc9e5-0279-415c-93b6-46af92f87875/kt2?orgId=1&from=1706184277297&to=1706184577297&panelId=31" width="450" height="200" frameborder="0"></iframe>
+      </div>
     </div>
 
+  </div>
 
-</div>
+  <!-- Row 2 -->
+  <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
 
+    <!-- Card 3 -->
+    <div
+      style="background: #fff; border-radius: 8px; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); display: flex; padding: 20px; width: 48%;  margin: 20px;">
+      <div style="flex: 1; font-size: 20px; ">
+        <p>BRGB</p>
+        <p>{{ rgb.datetime }}</p>
+        <p>{{ rgb.value? rgb.value: "" }}</p>
+      </div>
+      <div style="flex: 2;">
+        <iframe src="http://localhost:3000/d-solo/d95dc9e5-0279-415c-93b6-46af92f87875/kt2?orgId=1&from=1706184463413&to=1706184763413&panelId=37" width="450" height="200" frameborder="0"></iframe>
+      </div>
+    </div>
 
+    <!-- Card 4 -->
+    <div
+      style="background: #fff; border-radius: 8px; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); display: flex; padding: 20px; width: 48%;  margin: 20px;">
+      <div style="flex: 1; font-size: 20px;">
+        <p>BB</p>
+        <p>{{ bb.datetime }}</p>
+        <p>{{ bb.value }}</p>
+      </div>
+      <div style="flex: 2;">
+        <iframe src="http://localhost:3000/d-solo/d95dc9e5-0279-415c-93b6-46af92f87875/kt2?orgId=1&from=1706184313830&to=1706184613830&panelId=32" width="450" height="200" frameborder="0"></iframe>
+      </div>
+    </div>
 
+  </div>

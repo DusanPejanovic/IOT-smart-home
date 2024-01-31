@@ -32,8 +32,9 @@
       "running": true
     },
     "DMS": {
-      "simulated": true,
-      "pin": 25,
+      "simulated": false,
+      "r_pins": [25, 8, 7, 1],
+      "c_pins": [12, 16, 20, 21],
       "type": "MSW",
       "running": true
     },
